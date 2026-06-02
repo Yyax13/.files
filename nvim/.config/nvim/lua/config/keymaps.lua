@@ -2,6 +2,11 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
+local map = LazyVim.safe_keymap_set
+
 vim.keymap.set("n", "<leader>q", function()
     require("snacks").dashboard.open()
 end)
+
+map("n", "<S-z>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
+map("n", "<S-x>", "<cmd>bnext<cr>", { desc = "Next Buffer" })

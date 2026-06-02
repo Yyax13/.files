@@ -98,14 +98,8 @@ local current = 2
 
 local function walk_headers()
     current = (current % #headers) + 1
-    print(vim.inspect(headers[current]))
-    --    Snacks.dashboard.sections.header()
-    --    Snacks.dashboard.update()
 
-    vim.defer_fn(function()
-        Snacks.dashboard()
-    end, 10)
-    --    Snacks.dashboard()
+    Snacks.dashboard()
     --    Snacks.dashboard.setup()
 end
 
@@ -136,6 +130,17 @@ return {
           { icon = " ", key = "s", desc = "Restore Session", section = "session" },
           { icon = " ", key = "q", desc = "Quit", action = ":qa" },
         },
+            },
+            sections = {
+                function()
+                    return {
+                        align = "center",
+                        header = get_header(),
+                    }
+                end,
+
+                { section = "keys", gap = 1, padding = 1 },
+                { section = "startup" },
             },
         },
     },
