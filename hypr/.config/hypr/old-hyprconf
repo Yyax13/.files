@@ -94,7 +94,6 @@ env = QT_QPA_PLATFORM,wayland
 env = QT_QPA_PLATFORMTHEME,qt5ct
 env = QT_WAYLAND_DISABLE_WINDOWDECORATION,1
 env = QT_AUTO_SCREEN_SCALE_FACTOR,1
-env = QT_STYLE_OVERRIDE,kvantum
 
 # Toolkit Backend Variables
 env = GDK_BACKEND,wayland,x11,*
@@ -210,8 +209,8 @@ xwayland {
 
 # https://wiki.hyprland.org/Configuring/Variables/#input
 input {
-    kb_layout = custom
-    kb_variant = br_ansi_fix
+    kb_layout = br
+    kb_variant = abnt2
     kb_model =
     kb_options =
     kb_rules =
@@ -222,7 +221,7 @@ input {
     sensitivity = 0 # -1.0 - 1.0, 0 means no modification.
 
     touchpad {
-        natural_scroll = true
+        natural_scroll = false
     }
 }
 
@@ -336,9 +335,9 @@ bind = Ctrl, Escape, exec, killall waybar || waybar # toggle waybar
 
 # Screenshot 
 # add --cursor flag to include cursor also, --freeze flag to freeze before selection
-bind = , Print, exec, export XDG_SCREENSHOTS_DIR="~/Imagens/prints" && grimblast --notify copysave screen # Entire screen + clipboard copy
-bind = SUPER, Print, exec, export XDG_SCREENSHOTS_DIR="~/Imagens/prints" && grimblast --notify copysave active # current Active window only + clipboard copy
-bind = ALT, Print, exec, export XDG_SCREENSHOTS_DIR="~/Imagens/prints" && grimblast --notify copysave area # Select area to take screenshot
+bind = , Print, exec, export XDG_SCREENSHOTS_DIR="/home/yyax/Imagens/prints/" && grimblast --notify copysave screen # Entire screen + clipboard copy
+bind = SUPER, Print, exec, export XDG_SCREENSHOTS_DIR="/home/yyax/Imagens/prints/" && grimblast --notify copysave active # current Active window only + clipboard copy
+bind = ALT, Print, exec, export XDG_SCREENSHOTS_DIR="/home/yyax/Imagens/prints/" && grimblast --notify copysave area # Select area to take screenshot
 
 # Volume and Media Control
 bind = , XF86AudioRaiseVolume, exec, pamixer -i 5 
@@ -412,7 +411,7 @@ windowrule {
 
 windowrule {
   name = windowrule-6
-  opacity = 0.80 0.80
+  opacity = 0.95 0.95
   match:class = ^(obsidian)$
 }
 
