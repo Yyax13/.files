@@ -1,69 +1,66 @@
 @import "colors/colors.css";
 
 * {
-    border: none;
-    border-radius: 0px;
-    font-family: "Rubik", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
-    font-size: 16px;
-    min-height: 0;
-    padding: 0;
-    margin: 0;
-}
-
-.modules-center {
-    background: @bg0;
-    padding: 6px 12px;
-    border-radius: 28px;
-    box-shadow: transparent;
+  border: none;
+  border-radius: 0px;
+  font-family: "Rubik", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
+  font-size: 15px;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
 }
 
 window#waybar {
-    background: transparent;
+  background: @bg0;
+  padding: 8px;
+  border-radius: 0;
+  box-shadow: transparent;
 }
 
 tooltip {
-    background: @bg2;
-    border: 1px solid @bg3;
-    border-radius: 12px;
+  background: @bg0;
+  border: 1px solid @bg3;
+  border-radius: 12px;
 }
 
 tooltip label {
-    color: @fg;
-    padding: 6px;
+  color: @fg;
+  padding: 6px;
 }
 
 #workspaces {
-    background: transparent;
-    padding: 0;
-    margin: 0 10px 0 10px;
-    border: none;
-    box-shadow: none;
+  background: @bg0;
+  padding: 2px 4px 2px;
+  margin: 2px 10px 2px 10px;
+  border: none;
+  box-shadow: none;
 }
 
 #workspaces button {
-    padding: 0px 6px;
-    margin: 0px 2px;
-    border-radius: 16px;
-    color: @grey0;
-    background: transparent;
-    transition: all 0.3s ease-in-out;
+  padding: 2px 6px;
+  margin: 0px 2px;
+  border-radius: 4px;
+  color: @grey0;
+  font-size: 12px;
+  background: transparent;
+  transition: all 0.3s ease-in-out;
 }
 
 #workspaces button.active {
-    background: linear-gradient(135deg, black 0%, alpha(red, 0.4) 50%, @red 100%);
-    color: @fg;
-    min-width: 40px;
-    transition: all 0.3s ease-in-out;
+  background: linear-gradient(135deg, black 0%, alpha(red, 0.4) 50%, @red 100%);
+  color: @fg;
+  min-width: 36px;
+  transition: all 0.3s ease-in-out;
 }
 
 #workspaces button:hover {
-    background-color: @bg3;
-    color: @fg;
+  background-color: @bg3;
+  color: @fg;
 }
 
 #workspaces button.urgent {
-    background-color: @red;
-    color: @bg0;
+  background-color: @red;
+  color: @bg0;
 }
 
 #battery,
@@ -80,17 +77,17 @@ tooltip label {
 #submap,
 #power-profiles-daemon,
 #custom-home-folder {
-    background-color: @bg0;
-    padding: 0 8px;
-    margin: 0 5px;
-    border-radius: 0;
-    border: none;
-    box-shadow: none;
+  background-color: @bg0;
+  padding: 0 6px 0;
+  margin: 0 5px;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
 }
 
 #clock {
-    color: @fg;
-    margin: 0;
+  color: @fg;
+  margin: 0;
 }
 
 #power-profiles-daemon {
@@ -114,18 +111,24 @@ tooltip label {
 }
 
 #custom-rec {
-    color: @fg;
-    margin-left: 15px;
-    padding-bottom: 2px;
-    
+  color: @fg;
+  margin-left: 8px;
+  padding-right: 16px;
+  padding-bottom: 2px;
+
 }
 
 #custom-rec.active {
-    color: @red;
-    animation: blink 0.3s infinite alternate;
+  color: @red;
+  animation: blink 0.3s infinite alternate;
 }
 
 @keyframes blink {
-    from { opacity: 1; }
-    to { opacity: 0.4; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.4;
+  }
 }

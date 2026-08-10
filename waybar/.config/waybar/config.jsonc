@@ -1,15 +1,19 @@
 {
   "position": "top",
-  "margin-top": 6,
-  "modules-center": [
-    "clock",
-    "hyprland/workspaces",
+  "margin-top": 0,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-right": [
+    "network",
     "pulseaudio",
     "pulseaudio#microphone",
-    "network",
     "custom/divider",
     "tray",
     "custom/rec"
+  ],
+  "modules-center": [
+    "clock"
   ],
   "hyprland/workspaces": {
     "format": "{icon}",
