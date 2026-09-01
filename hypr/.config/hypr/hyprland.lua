@@ -571,6 +571,23 @@ hl.window_rule({
 })
 
 hl.window_rule({
+	name = "firefox-picture-in-picture",
+
+	match = {
+		class = "^firefox$",
+		title = "^Picture-in-Picture$",
+	},
+
+	float = true,
+	pin = true,
+
+	size = { 701, 428 },
+	move = { 1213, 572 },
+
+	no_initial_focus = true,
+})
+
+hl.window_rule({
 	name = "windowrule-5",
 	match = {
 		class = "^(dev.warp.Warp)$",
