@@ -1,0 +1,6 @@
+alias gs='git status'
+alias gm='git commit'
+alias gl='PAGER=cat git log --oneline --graph | head -30'
+alias gll='PAGER=cat git log --oneline --graph'
+alias glll='git log --oneline --graph'
+alias ghelp='printf "Z3MgICAgLSAgIEdpdCBTdGF0dXMKZ20gICAgLSAgIEdpdCBDb21taXQKZ2wgICAgLSAgIEdpdCBMb2dzIExpbWl0ZWQgdG8gMzAKZ2xsICAgLSAgIEdpdCBMb2dzIFVubGltaXRlZApnbGxsICAtICAgR2l0IExvZ3MgVW5saW1pdGVkIHdpdGggUEFHRVIKZ2hlbHAgLSAgIFNob3cgdGhpcyBtZW51Cg=="|base64 -d'
