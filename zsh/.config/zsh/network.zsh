@@ -53,3 +53,7 @@ dmip() {
         ""
     '
 }
+
+sfuf () {
+  nmap -p- -T4 --min-rate 5000 --max-retries 1 -n --open $@
+}
