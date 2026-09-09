@@ -2,8 +2,9 @@
 
 * {
   border: none;
-  border-radius: 0px;
-  font-family: "Rubik", "JetBrainsMono Nerd Font Propo", "Noto Sans CJK JP", "Noto Sans CJK KR";
+  border-radius: 0;
+  font-family: "Rubik", "JetBrainsMono Nerd Font Propo",
+    "Noto Sans CJK JP", "Noto Sans CJK KR";
   font-size: 15px;
   min-height: 0;
   padding: 0;
@@ -11,14 +12,14 @@
 }
 
 window#waybar {
-  background: @bg0;
+  background: rgba(10, 10, 10, 0.65);
   padding: 8px;
   border-radius: 0;
-  box-shadow: transparent;
+  box-shadow: none;
 }
 
 tooltip {
-  background: @bg0;
+  background: rgba(0,0,0,0.00);
   border: 1px solid @bg3;
   border-radius: 12px;
 }
@@ -29,27 +30,34 @@ tooltip label {
 }
 
 #workspaces {
-  background: @bg0;
-  padding: 2px 4px 2px;
-  margin: 2px 10px 2px 10px;
+  background: rgba(0,0,0,0.00);
+  padding: 2px 4px;
+  margin: 2px 10px;
   border: none;
   box-shadow: none;
 }
 
 #workspaces button {
   padding: 2px 6px;
-  margin: 0px 2px;
+  margin: 0 2px;
   border-radius: 4px;
-  color: @grey0;
+  color: #ffffff;
   font-size: 12px;
   background: transparent;
   transition: all 0.3s ease-in-out;
 }
 
 #workspaces button.active {
-  background: linear-gradient(135deg, black 0%, alpha(red, 0.4) 50%, @red 100%);
+  background: linear-gradient(
+    135deg,
+    @bg0 0%,
+    alpha(@primary, 0.4) 50%,
+    @primary 100%
+  );
+
   color: @fg;
   min-width: 36px;
+
   transition: all 0.3s ease-in-out;
 }
 
@@ -59,7 +67,7 @@ tooltip label {
 }
 
 #workspaces button.urgent {
-  background-color: @red;
+  background-color: @primary;
   color: @bg0;
 }
 
@@ -77,8 +85,8 @@ tooltip label {
 #submap,
 #power-profiles-daemon,
 #custom-home-folder {
-  background-color: @bg0;
-  padding: 0 6px 0;
+  background-color: rgba(0,0,0,0.00);
+  padding: 0 6px;
   margin: 0 5px;
   border-radius: 0;
   border: none;
@@ -106,7 +114,7 @@ tooltip label {
 }
 
 #battery {
-  color: @green;
+  color: @secondary;
   margin-right: 0;
 }
 
@@ -115,11 +123,10 @@ tooltip label {
   margin-left: 8px;
   padding-right: 16px;
   padding-bottom: 2px;
-
 }
 
 #custom-rec.active {
-  color: @red;
+  color: @primary;
   animation: blink 0.3s infinite alternate;
 }
 

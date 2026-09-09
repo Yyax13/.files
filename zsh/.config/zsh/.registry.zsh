@@ -4,3 +4,4 @@ source $HOME/.config/zsh/language.zsh
 source $HOME/.config/zsh/objdump.zsh
 source $HOME/.config/zsh/git.zsh
 source $HOME/.config/zsh/themes/wffn.zsh-theme
+source $HOME/.config/zsh/workspaces.zsh

@@ -624,7 +624,7 @@ hl.window_rule({
 	match = {
 		class = "^(kitty)$",
 	},
-	opacity = 0.90,
+	opacity = 0.95,
 })
 
 hl.window_rule({
