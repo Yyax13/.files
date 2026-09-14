@@ -1,0 +1,15 @@
+xkb_keymap {
+    xkb_keycodes  { include "evdev+aliases(qwerty)" };
+    xkb_types     { include "complete" };
+    xkb_compat    { include "complete" };
+    xkb_symbols   {
+        include "pc+br(abnt2)+inet(evdev)"
+        include "level3(ralt_switch)"
+
+        key <AE11> {
+            type= "FOUR_LEVEL",
+            symbols[Group1] = [ minus, underscore, backslash, bar ]
+        };
+    };
+    xkb_geometry  { include "pc(pc105)" };
+};

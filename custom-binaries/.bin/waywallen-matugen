@@ -1,0 +1,504 @@
+#!/usr/bin/env bash
+
+set -u
+
+# ============================================================
+# Configuration
+# ============================================================
+
+POLL_INTERVAL=1
+
+THEME_DIR="$HOME/.cache/theme"
+PALETTE_CSS="$THEME_DIR/palette.css"
+
+PALETTE_JSON="$THEME_DIR/palette.json"
+PALETTE_CSS="$THEME_DIR/palette.css"
+
+LAST_WALLPAPER=""
+
+mkdir -p "$THEME_DIR"
+
+# ============================================================
+# Find current Waywallen wallpaper
+# ============================================================
+
+get_wallpaper() {
+  local proc
+  local path
+  local -a args
+
+  for proc in /proc/[0-9]*; do
+    [[ -r "$proc/cmdline" ]] || continue
+
+    mapfile -d '' -t args <"$proc/cmdline" 2>/dev/null || continue
+
+    [[ ${#args[@]} -gt 0 ]] || continue
+    [[ "${args[0]}" == *waywallen-image-renderer* ]] || continue
+
+    for ((i = 0; i < ${#args[@]}; i++)); do
+      if [[ "${args[i]}" == "--path" ]]; then
+        ((i + 1 < ${#args[@]})) || continue
+
+        path="${args[i + 1]}"
+
+        if [[ -f "$path" ]]; then
+          printf '%s\n' "$path"
+          return 0
+        fi
+      fi
+    done
+  done
+
+  return 1
+}
+
+# ============================================================
+# Generate palette.css
+# ============================================================
+
+generate_palette() {
+  local wallpaper="$1"
+
+  python3 - "$wallpaper" "$PALETTE_JSON" "$PALETTE_CSS" <<'PY'
+import sys
+import colorsys
+import math
+import json
+from pathlib import Path
+
+from PIL import Image
+
+
+IMAGE = sys.argv[1]
+JSON_OUTPUT = Path(sys.argv[2])
+CSS_OUTPUT = Path(sys.argv[3])
+
+
+# ============================================================
+# Color helpers
+# ============================================================
+
+def clamp(value, low=0.0, high=1.0):
+	return max(low, min(high, value))
+
+
+def rgb_hex(rgb):
+	return "#{:02x}{:02x}{:02x}".format(*rgb)
+
+
+def rgb_to_hsv(rgb):
+	r, g, b = [x / 255.0 for x in rgb]
+	return colorsys.rgb_to_hsv(r, g, b)
+
+
+def rgb_to_hsl(rgb):
+	r, g, b = [x / 255.0 for x in rgb]
+	return colorsys.rgb_to_hls(r, g, b)
+
+
+def hsl_to_rgb(h, l, s):
+	r, g, b = colorsys.hls_to_rgb(
+		h % 1.0,
+		clamp(l),
+		clamp(s),
+	)
+
+	return tuple(round(x * 255) for x in (r, g, b))
+
+
+def lighten(rgb, amount):
+	h, l, s = rgb_to_hsl(rgb)
+
+	return hsl_to_rgb(
+		h,
+		l + amount,
+		s,
+	)
+
+
+def darken(rgb, amount):
+	h, l, s = rgb_to_hsl(rgb)
+
+	return hsl_to_rgb(
+		h,
+		l - amount,
+		s,
+	)
+
+
+def rotate_hue(rgb, degrees):
+	h, l, s = rgb_to_hsl(rgb)
+
+	return hsl_to_rgb(
+		h + degrees / 360.0,
+		l,
+		s,
+	)
+
+
+def hue_distance(a, b):
+	ha = rgb_to_hsv(a)[0]
+	hb = rgb_to_hsv(b)[0]
+
+	distance = abs(ha - hb)
+
+	return min(distance, 1.0 - distance)
+
+
+def rgb_distance(a, b):
+	return math.sqrt(
+		sum(
+			(a[i] - b[i]) ** 2
+			for i in range(3)
+		)
+	) / 441.67295593
+
+
+def mix(a, b, amount):
+	return tuple(
+		round(
+			a[i] * (1.0 - amount)
+			+ b[i] * amount
+		)
+		for i in range(3)
+	)
+
+
+# ============================================================
+# Load image
+# ============================================================
+
+image = Image.open(IMAGE).convert("RGB")
+
+image.thumbnail((320, 180))
+
+
+# ============================================================
+# Quantize
+# ============================================================
+
+quantized = image.quantize(
+	colors=64,
+	method=Image.Quantize.MEDIANCUT,
+)
+
+palette = quantized.getpalette()
+
+try:
+	pixels = list(quantized.get_flattened_data())
+except AttributeError:
+	pixels = list(quantized.getdata())
+
+
+# ============================================================
+# Find dominant colors
+# ============================================================
+
+counts = {}
+
+for index in pixels:
+	counts[index] = counts.get(index, 0) + 1
+
+
+candidates = []
+
+for index, count in counts.items():
+	base = index * 3
+
+	rgb = tuple(
+		palette[base + i]
+		for i in range(3)
+	)
+
+	h, s, v = rgb_to_hsv(rgb)
+
+	if s < 0.28:
+		continue
+
+	if v < 0.15:
+		continue
+
+	if v > 0.98:
+		continue
+
+	score = (
+		count
+		* (s ** 1.7)
+		* ((0.15 + v) ** 1.8)
+	)
+
+	candidates.append({
+		"rgb": rgb,
+		"count": count,
+		"score": score,
+	})
+
+
+candidates.sort(
+	key=lambda x: x["score"],
+	reverse=True,
+)
+
+
+# ============================================================
+# Primary
+# ============================================================
+
+if candidates:
+	primary = candidates[0]["rgb"]
+else:
+	primary = (148, 33, 36)
+
+
+# ============================================================
+# Secondary
+# ============================================================
+
+secondary = None
+
+for candidate in candidates[1:]:
+	color = candidate["rgb"]
+
+	hue_diff = hue_distance(primary, color)
+	rgb_diff = rgb_distance(primary, color)
+
+	if hue_diff >= 0.12 and rgb_diff >= 0.18:
+		secondary = color
+		break
+
+
+if secondary is None:
+	secondary = rotate_hue(
+		primary,
+		180,
+	)
+
+
+# ============================================================
+# Color families
+# ============================================================
+
+primary_dark = darken(primary, 0.20)
+primary_darker = darken(primary, 0.35)
+primary_light = lighten(primary, 0.20)
+primary_lighter = lighten(primary, 0.35)
+
+secondary_dark = darken(secondary, 0.20)
+secondary_darker = darken(secondary, 0.35)
+secondary_light = lighten(secondary, 0.20)
+secondary_lighter = lighten(secondary, 0.35)
+
+
+# ============================================================
+# Analogous
+# ============================================================
+
+primary_analogous_left = rotate_hue(primary, -30)
+primary_analogous_right = rotate_hue(primary, 30)
+
+secondary_analogous_left = rotate_hue(secondary, -30)
+secondary_analogous_right = rotate_hue(secondary, 30)
+
+
+# ============================================================
+# Complementary / contrast
+# ============================================================
+
+primary_complement = rotate_hue(primary, 180)
+secondary_complement = rotate_hue(secondary, 180)
+
+primary_contrast = rotate_hue(primary, 150)
+secondary_contrast = rotate_hue(secondary, 150)
+
+
+# ============================================================
+# Backgrounds
+# ============================================================
+
+background = (9, 9, 9)
+background_alt = (16, 16, 16)
+
+surface = (21, 21, 21)
+surface_alt = (28, 28, 28)
+
+
+# ============================================================
+# Foreground
+# ============================================================
+
+foreground = (242, 242, 242)
+foreground_muted = (168, 168, 168)
+foreground_dim = (112, 112, 112)
+
+
+# ============================================================
+# Semantic colors
+# ============================================================
+
+error = rotate_hue(primary, 300)
+warning = rotate_hue(primary, 60)
+
+
+# ============================================================
+# Palette dictionary
+# ============================================================
+
+palette_data = {
+	"primary": rgb_hex(primary),
+	"primary_dark": rgb_hex(primary_dark),
+	"primary_darker": rgb_hex(primary_darker),
+	"primary_light": rgb_hex(primary_light),
+	"primary_lighter": rgb_hex(primary_lighter),
+
+	"secondary": rgb_hex(secondary),
+	"secondary_dark": rgb_hex(secondary_dark),
+	"secondary_darker": rgb_hex(secondary_darker),
+	"secondary_light": rgb_hex(secondary_light),
+	"secondary_lighter": rgb_hex(secondary_lighter),
+
+	"primary_analogous_left": rgb_hex(primary_analogous_left),
+	"primary_analogous_right": rgb_hex(primary_analogous_right),
+
+	"secondary_analogous_left": rgb_hex(secondary_analogous_left),
+	"secondary_analogous_right": rgb_hex(secondary_analogous_right),
+
+	"primary_complement": rgb_hex(primary_complement),
+	"secondary_complement": rgb_hex(secondary_complement),
+
+	"primary_contrast": rgb_hex(primary_contrast),
+	"secondary_contrast": rgb_hex(secondary_contrast),
+
+	"background": rgb_hex(background),
+	"background_alt": rgb_hex(background_alt),
+
+	"surface": rgb_hex(surface),
+	"surface_alt": rgb_hex(surface_alt),
+
+	"foreground": rgb_hex(foreground),
+	"foreground_muted": rgb_hex(foreground_muted),
+	"foreground_dim": rgb_hex(foreground_dim),
+
+	"error": rgb_hex(error),
+	"warning": rgb_hex(warning),
+}
+
+
+# ============================================================
+# Generate CSS from SAME dictionary
+# ============================================================
+
+css = """/* =========================================================
+ * Automatically generated by waywallen-matugen
+ *
+ * Wallpaper:
+ * %s
+ * ========================================================= */
+
+""" % IMAGE
+
+for key, value in palette_data.items():
+	css += f"@define-color {key} {value};\n"
+
+
+# ============================================================
+# Atomic JSON write
+# ============================================================
+
+json_tmp = JSON_OUTPUT.with_suffix(".json.tmp")
+
+json_tmp.write_text(
+	json.dumps(
+		palette_data,
+		indent=2,
+	) + "\n",
+	encoding="utf-8",
+)
+
+json_tmp.replace(JSON_OUTPUT)
+
+
+# ============================================================
+# Atomic CSS write
+# ============================================================
+
+css_tmp = CSS_OUTPUT.with_suffix(".css.tmp")
+
+css_tmp.write_text(
+	css,
+	encoding="utf-8",
+)
+
+css_tmp.replace(CSS_OUTPUT)
+
+
+print(f"Primary:   {rgb_hex(primary)}")
+print(f"Secondary: {rgb_hex(secondary)}")
+print(f"JSON:      {JSON_OUTPUT}")
+print(f"CSS:       {CSS_OUTPUT}")
+
+PY
+}
+
+# ============================================================
+# Reload Waybar and Hyprland
+# ============================================================
+
+reload_waybar() {
+  echo "Reloading Waybar..."
+
+  pkill -SIGUSR2 -x waybar 2>/dev/null || true
+}
+
+reload_hyprland() {
+  echo "Reloading Hyprland..."
+
+  if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl reload
+  fi
+}
+# ============================================================
+# Apply theme
+# ============================================================
+
+apply_theme() {
+  local wallpaper="$1"
+
+  echo "Generating palette..."
+
+  if ! generate_palette "$wallpaper"; then
+    echo "ERROR: Failed to generate palette." >&2
+    return 1
+  fi
+
+  reload_hyprland
+  reload_waybar
+
+  echo "Theme regenerated."
+}
+
+# ============================================================
+# Main watcher
+# ============================================================
+
+echo "Waywallen → theme watcher started."
+
+while true; do
+
+  WALLPAPER="$(get_wallpaper || true)"
+
+  if [[ -n "$WALLPAPER" && "$WALLPAPER" != "$LAST_WALLPAPER" ]]; then
+
+    echo "Wallpaper changed:"
+    echo "  $WALLPAPER"
+
+    if apply_theme "$WALLPAPER"; then
+      LAST_WALLPAPER="$WALLPAPER"
+    else
+      echo "Theme update failed." >&2
+    fi
+
+  fi
+
+  sleep "$POLL_INTERVAL"
+
+done

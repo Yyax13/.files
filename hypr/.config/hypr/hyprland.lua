@@ -261,7 +261,7 @@ hl.config({
 hl.config({
 	input = {
 		kb_layout = "custom",
-		kb_variant = "br_ansi_fix",
+		kb_file = os.getenv("HOME") .. "/.config/xkb/keymap/custom-br.xkb",
 		follow_mouse = 1,
 		-- force_no_accel = 1
 		sensitivity = 0,
@@ -581,6 +581,14 @@ hl.window_rule({
 	move = { 1213, 572 },
 
 	no_initial_focus = true,
+})
+
+hl.window_rule({
+	name = "ristretto-image-view",
+	match = {
+		class = "^(org.xfce.ristretto)$",
+	},
+	float = true,
 })
 
 hl.window_rule({

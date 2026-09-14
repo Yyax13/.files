@@ -1,0 +1,17 @@
+[Unit]
+Description=Waywallen wallpaper to Matugen theme watcher
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.bin/waywallen-matugen
+
+Restart=on-failure
+RestartSec=2
+
+# Give the service a reasonable shutdown time
+TimeoutStopSec=5
+
+[Install]
+WantedBy=graphical-session.target
