@@ -817,6 +817,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("/usr/bin/dunst")
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("awww-daemon")
+	hl.exec_cmd("/usr/bin/systemctl --user --enable --now waywallen-matugen.service")
 	hl.exec_cmd(
 		'awww img "~/Imagens/walls/a_lake_with_snow_covered_mountains_in_the_background.jpg" --transition-fps 255 --transition-type outer --transition-duration 0.8'
 	)
