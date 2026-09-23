@@ -375,6 +375,12 @@ local function reload_if_changed()
 
     local data = read_palette()
     apply(accent_shades(data))
+
+    if package.loaded["lualine"] then
+        package.loaded["lualine.themes.auto"] = nil
+        local lualine = require("lualine")
+        lualine.setup(lualine.get_config())
+    end
 end
 
 local function start_watcher()
