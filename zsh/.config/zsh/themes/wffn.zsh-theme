@@ -1,30 +1,116 @@
-# Depends on the git plugin for work_in_progress()
+autoload -U colors && colors
+autoload -Uz is-at-least
+
 (( $+functions[work_in_progress] )) || work_in_progress() {}
 
-ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[red]%}[%{$fg[124]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$fg[red]%}]"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[124]%}"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
+: ${THEME_PALETTE:=$HOME/.cache/theme/palette.json}
+: ${THEME_PALETTE_KEY:=primary}
+: ${THEME_PRIMARY_FALLBACK:=#d70000}
 
-# Customized git status, oh-my-zsh currently does not allow render dirty status before branch
+zmodload -F zsh/stat b:zstat 2>/dev/null
+
+typeset -g THEME_PALETTE_MTIME=""
+typeset -g THEME_PRIMARY=""
+typeset -g THEME_RESET="%f%b"
+typeset -g base_prompt custom_prompt last_run_time last_vcs_info
+
+typeset -g THEME_TRUECOLOR=0
+is-at-least 5.7 && THEME_TRUECOLOR=1
+
+_theme_hex_to_256() {
+    local hex=${1#\#}
+    local -i r=16#${hex[1,2]} g=16#${hex[3,4]} b=16#${hex[5,6]}
+    if (( r == g && g == b )); then
+        (( r < 8 ))   && { print -n 16;  return }
+        (( r > 248 )) && { print -n 231; return }
+        print -n $(( 232 + (r - 8) * 24 / 247 ))
+        return
+    fi
+    print -n $(( 16 + 36 * (r * 5 / 255) + 6 * (g * 5 / 255) + (b * 5 / 255) ))
+}
+
+_theme_fg() {
+    local c=$1
+    if [[ $c == '#'[0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F][0-9a-fA-F] ]]; then
+        (( THEME_TRUECOLOR )) || c=$(_theme_hex_to_256 $c)
+    fi
+    print -n "%F{$c}"
+}
+
+_theme_apply_colors() {
+    ZSH_THEME_GIT_PROMPT_PREFIX="${THEME_PRIMARY}["
+    ZSH_THEME_GIT_PROMPT_SUFFIX="%b${THEME_PRIMARY}]${THEME_RESET}"
+    ZSH_THEME_GIT_PROMPT_DIRTY="%B"
+    ZSH_THEME_GIT_PROMPT_CLEAN=""
+
+    base_prompt="${THEME_PRIMARY}[%~% ]%B ᛋᛋ%b${THEME_RESET} "
+}
+
+update_theme_colors() {
+    local mtime=""
+
+    if [[ -r "$THEME_PALETTE" ]]; then
+        local -a st
+        if zstat -A st +mtime "$THEME_PALETTE" 2>/dev/null; then
+            mtime=$st[1]
+        else
+            mtime=$(command stat -c %Y "$THEME_PALETTE" 2>/dev/null \
+                 || command stat -f %m "$THEME_PALETTE" 2>/dev/null)
+        fi
+    fi
+
+    [[ "$mtime" == "$THEME_PALETTE_MTIME" ]] && return
+    THEME_PALETTE_MTIME=$mtime
+
+    local color=""
+    if [[ -n "$mtime" ]]; then
+        if (( $+commands[jq] )); then
+            color=$(jq -r --arg k "$THEME_PALETTE_KEY" '.[$k] // empty' \
+                    "$THEME_PALETTE" 2>/dev/null)
+        else
+            color=$(sed -n \
+                "s/.*\"$THEME_PALETTE_KEY\"[[:space:]]*:[[:space:]]*\"\([^\"]*\)\".*/\1/p" \
+                "$THEME_PALETTE" 2>/dev/null | head -1)
+        fi
+    fi
+
+    THEME_PRIMARY=$(_theme_fg ${color:-$THEME_PRIMARY_FALLBACK})
+    _theme_apply_colors
+}
+
+update_theme_colors
+
 git_custom_status() {
   local branch=$(git_current_branch)
   [[ -n "$branch" ]] || return 0
   branch="${branch//\%/%%}"
-  print "%{${fg_bold[yellow]}%}$(work_in_progress)%{$reset_color%}\
+  print "${THEME_PRIMARY}$(work_in_progress)${THEME_RESET}\
 ${ZSH_THEME_GIT_PROMPT_PREFIX}$(parse_git_dirty)${branch}\
 ${ZSH_THEME_GIT_PROMPT_SUFFIX}"
 }
-autoload -U colors && colors
 
-#export VCS_PROMPT=hg_prompt_info
+function hg_prompt_info() {
+    unset output info parts branch_parts branch
+
+    local output=""
+    if ! output="$(hg status 2> /dev/null)"; then
+        return
+    fi
+
+    local info=$(hg log -l1 --template '{author}:{node|short}:{remotenames}:{phabdiff}')
+    local parts=(${(@s/:/)info})
+    local branch_parts=(${(@s,/,)parts[3]})
+    local branch=${branch_parts[-1]}
+    [ ! -z "${parts[3]}" ] && [[ "${parts[1]}" =~ "$USER@" ]] && branch=${parts[3]}
+    [ -z "${parts[3]}" ] && branch=${parts[2]}
+
+    local emphasis=""
+    [[ ! -z "$output" ]] && emphasis="%B"
+
+    print "${THEME_PRIMARY}[${emphasis}${branch}%b${THEME_PRIMARY}]${THEME_RESET}"
+}
+
 export VCS_PROMPT=git_custom_status
-
-base_prompt="%{$fg[red]%}[%~% ]%(?.%{$fg[124]%}.%{$fg[124]%})%B ᛋᛋ%b "
-custom_prompt=""
-last_run_time=""
-last_vcs_info=""
-
 
 function pipestatus_parse {
   PIPESTATUS="$pipestatus"
@@ -36,13 +122,10 @@ function pipestatus_parse {
   done
 
   if [[ "$ERROR" -ne 0 ]]; then
-      print "[%{$fg[124]%}$PIPESTATUS%{$fg[red]%}]"
+      print "${THEME_PRIMARY}[%B$PIPESTATUS%b${THEME_PRIMARY}]${THEME_RESET}"
   fi
 }
 
-
-# Combine it all into a final right-side prompt
-PROMPT='%{$fg[cyan]%}[%~% ]%(?.%{$fg[green]%}.%{$fg[red]%})%B$%b '
 function preexec() {
     last_run_time=$(perl -MTime::HiRes=time -e 'printf "%.9f\n", time')
 }
@@ -75,22 +158,14 @@ function duration() {
 }
 
 function precmd() {
+    update_theme_colors
+
     RETVAL=$(pipestatus_parse)
     local info=""
 
     if [ ! -z "$last_run_time" ]; then
         local elapsed=$(duration $last_run_time)
-        last_run_time=$(print $last_run_time | tr -d ".")
-        if [ $(( $(perl -MTime::HiRes=time -e 'printf "%.9f\n", time' | tr -d ".") - $last_run_time )) -gt $(( 120 * 1000 * 1000 * 1000 )) ]; then
-            local elapsed_color="%{$fg[125]%}"
-        elif [ $(( $(perl -MTime::HiRes=time -e 'printf "%.9f\n", time' | tr -d ".") - $last_run_time )) -gt $(( 60 * 1000 * 1000 * 1000 )) ]; then
-            local elapsed_color="%{$fg[124]%}"
-        elif [ $(( $(perl -MTime::HiRes=time -e 'printf "%.9f\n", time' | tr -d ".") - $last_run_time )) -gt $(( 10 * 1000 * 1000 * 1000 )) ]; then
-            local elapsed_color="%{$fg[124]%}"
-        else
-            local elapsed_color="%{$fg[124]%}"
-        fi
-        info=$(printf "%s%s%s%s%s" "%{$fg[red]%}[" "$elapsed_color" "$elapsed" "%{$fg[red]%}]" "$RETVAL")
+        info=$(printf "%s%s%s%s" "${THEME_PRIMARY}[" "$elapsed" "${THEME_PRIMARY}]${THEME_RESET}" "$RETVAL")
         unset last_run_time
     fi
 
@@ -109,33 +184,5 @@ function precmd() {
     [ -z "$info" ] && custom_prompt="$base_prompt" || custom_prompt="$info$base_prompt"
 }
 
-function hg_prompt_info() {
-    unset output info parts branch_parts branch
-
-    local output=""
-    if ! output="$(hg status 2> /dev/null)"; then
-        return
-    fi
-
-    local info=$(hg log -l1 --template '{author}:{node|short}:{remotenames}:{phabdiff}')
-    local parts=(${(@s/:/)info})
-    local branch_parts=(${(@s,/,)parts[3]})
-    local branch=${branch_parts[-1]}
-    [ ! -z "${parts[3]}" ] && [[ "${parts[1]}" =~ "$USER@" ]] && branch=${parts[3]}
-    [ -z "${parts[3]}" ] && branch=${parts[2]}
-
-    if [[ ! -z "$output" ]]; then
-        local color="%{$fg[124]%}"
-    elif [[ "${branch}" == "master" || "${branch}" == "warm" ]]; then
-        local color="%{$fg[124]%}"
-    else
-        local color="%{$fg[124]%}"
-    fi
-
-    print "%{$fg[red]%}[${color}${branch}%{$fg[red]%}]"
-}
-
 setopt PROMPT_SUBST
 PROMPT='$custom_prompt'
-
-
