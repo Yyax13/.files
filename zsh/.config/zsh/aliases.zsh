@@ -2,5 +2,6 @@ alias clear='printf "\033[3J\033[H\033[2J"'
 alias c='clear'
 alias pfetch='fastfetch --config ~/.config/fastfetch/presets/groups.jsonc'
 
+alias dgc='graperoot --opencode'
 alias nr='npm run'
 alias l='ls --group-directories-first --color=auto'
