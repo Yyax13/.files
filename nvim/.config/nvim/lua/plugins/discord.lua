@@ -39,20 +39,22 @@ return {
 
         text = {
             editing = function(opts)
-                local path = vim.fn.fnamemodify(opts.filename, ":.")
+                local full_path = vim.fn.expand("%:p")
+                local path = vim.fn.fnamemodify(full_path, ":.")
 
                 if opts.workspace_dir then
-                    path = vim.fs.relpath(opts.workspace_dir, opts.filename) or path
+                    path = vim.fs.relpath(opts.workspace_dir, full_path) or path
                 end
 
                 return "Editing " .. path
             end,
 
             viewing = function(opts)
-                local path = vim.fn.fnamemodify(opts.filename, ":.")
+                local full_path = vim.fn.expand("%:p")
+                local path = vim.fn.fnamemodify(full_path, ":.")
 
                 if opts.workspace_dir then
-                    path = vim.fs.relpath(opts.workspace_dir, opts.filename) or path
+                    path = vim.fs.relpath(opts.workspace_dir, full_path) or path
                 end
 
                 return "Viewing " .. path

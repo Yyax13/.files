@@ -3,5 +3,4 @@ alias c='clear'
 alias pfetch='fastfetch --config ~/.config/fastfetch/presets/groups.jsonc'
 
 alias nr='npm run'
-
 alias l='ls --group-directories-first --color=auto'

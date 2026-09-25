@@ -5,3 +5,5 @@ source $HOME/.config/zsh/objdump.zsh
 source $HOME/.config/zsh/git.zsh
 source $HOME/.config/zsh/themes/wffn.zsh-theme
 source $HOME/.config/zsh/workspaces.zsh
+source $HOME/.config/zsh/htb-hosts.zsh
+source $HOME/.config/zsh/ffuf.zsh
