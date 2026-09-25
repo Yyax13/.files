@@ -1,0 +1,1 @@
+{"timestamp": "2026-09-18T01:47:04.619709+00:00", "tool": "graph_register_edit", "payload": {"files": ["shaders/saturation.glsl"], "summary": "Fixed GLSL int-literal-to-float compile bug preventing saturation shader from applying"}}

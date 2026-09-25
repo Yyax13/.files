@@ -1,0 +1,49 @@
+{
+  "nodes": [
+    {
+      "id": "action:edit:1789696024",
+      "type": "action",
+      "meta": {
+        "summary": "Fixed GLSL int-literal-to-float compile bug preventing saturation shader from applying"
+      }
+    },
+    {
+      "id": "shaders/saturation.glsl",
+      "type": "file"
+    }
+  ],
+  "edges": [
+    {
+      "from": "action:edit:1789696024",
+      "to": "shaders/saturation.glsl",
+      "rel": "edited",
+      "ts": 1789696024
+    }
+  ],
+  "files": {
+    "shaders/saturation.glsl": {
+      "last_action": "edited",
+      "last_ts": "2026-09-18T01:47:04.618073+00:00",
+      "edited_count": 1
+    }
+  },
+  "actions": [
+    {
+      "ts": 1789696024,
+      "kind": "register_edit",
+      "payload": {
+        "kind": "register_edit"
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "ts": 1789696024,
+      "summary": "Fixed GLSL int-literal-to-float compile bug preventing saturation shader from applying",
+      "files": [
+        "shaders/saturation.glsl"
+      ],
+      "scope": "file"
+    }
+  ]
+}

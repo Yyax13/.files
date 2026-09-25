@@ -591,6 +591,31 @@ hl.window_rule({
 	float = true,
 })
 
+local shaders_dir = os.getenv("HOME") .. "/.config/hypr/shaders/"
+local saturation_shader = shaders_dir .. "saturation.glsl"
+
+-- HyprWindowShade drops all shaders on fullscreen windows by default, so this
+-- always emits both the windowed (+shader) and fullscreen (+shader_fullscreen)
+-- rules for a given match. `match` is the usual hl.window_rule match table
+-- (class = "...", title = "...", ...); `name` is a prefix used to keep the two
+-- generated rule names unique.
+local function apply_shader(name, match, shaderPath)
+	hl.window_rule({
+		name = name .. "-windowed",
+		match = match,
+		tag = "+shader:" .. shaderPath,
+	})
+	hl.window_rule({
+		name = name .. "-fullscreen",
+		match = match,
+		tag = "+shader_fullscreen:" .. shaderPath,
+	})
+end
+
+apply_shader("sober-saturation-class", { class = "^(org.vinegarhq.Sober)$" }, saturation_shader)
+apply_shader("sober-saturation-title", { title = "(.*)Roblox(.*)" }, saturation_shader)
+apply_shader("cs", { title = "^(cs2)$" }, saturation_shader)
+
 hl.window_rule({
 	name = "windowrule-5",
 	match = {
