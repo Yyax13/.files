@@ -1,0 +1,82 @@
+{
+  "nodes": [
+    {
+      "id": "query:commit changes dotfiles repo",
+      "type": "query",
+      "meta": {
+        "text": "commit changes in dotfiles repo"
+      }
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::ask_save_path",
+      "type": "file"
+    },
+    {
+      "id": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+      "type": "file"
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::add_preset",
+      "type": "file"
+    },
+    {
+      "id": "nvim/.config/nvim/lazy-lock.json",
+      "type": "file"
+    },
+    {
+      "id": ".claude/settings.local.json",
+      "type": "file"
+    }
+  ],
+  "edges": [
+    {
+      "from": "query:commit changes dotfiles repo",
+      "to": "custom-binaries/.bin/codebase.py::ask_save_path",
+      "rel": "retrieved",
+      "ts": 1790883175
+    },
+    {
+      "from": "query:commit changes dotfiles repo",
+      "to": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+      "rel": "retrieved",
+      "ts": 1790883175
+    },
+    {
+      "from": "query:commit changes dotfiles repo",
+      "to": "custom-binaries/.bin/res.py::add_preset",
+      "rel": "retrieved",
+      "ts": 1790883175
+    },
+    {
+      "from": "query:commit changes dotfiles repo",
+      "to": "nvim/.config/nvim/lazy-lock.json",
+      "rel": "retrieved",
+      "ts": 1790883175
+    },
+    {
+      "from": "query:commit changes dotfiles repo",
+      "to": ".claude/settings.local.json",
+      "rel": "retrieved",
+      "ts": 1790883175
+    }
+  ],
+  "files": {},
+  "actions": [
+    {
+      "ts": 1790883175,
+      "kind": "retrieve",
+      "payload": {
+        "kind": "retrieve",
+        "query": "commit changes in dotfiles repo"
+      }
+    },
+    {
+      "ts": 1790883175,
+      "kind": "continue_retrieve",
+      "payload": {
+        "kind": "continue_retrieve",
+        "query": "commit changes in dotfiles repo"
+      }
+    }
+  ]
+}

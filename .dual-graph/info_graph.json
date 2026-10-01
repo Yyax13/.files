@@ -1,0 +1,854 @@
+{
+  "root": "/home/yyax/dotfiles",
+  "node_count": 35,
+  "edge_count": 52,
+  "file_count": 17,
+  "symbol_count": 18,
+  "nodes": [
+    {
+      "id": "AGENTS.md",
+      "kind": "file",
+      "path": "AGENTS.md",
+      "ext": ".md",
+      "size": 4020,
+      "keywords": [],
+      "content": "<!-- dgc-policy-v11 -->\n# Dual-Graph Context Policy\n\nThis project uses a local dual-graph MCP server for efficient context retrieval.\n\n## MANDATORY: Always follow this order\n\n1. **Call `graph_continue` first** \u2014 before any file exploration, grep, or code reading.\n\n2. **If `graph_continue` returns `needs_project=true`**: call `graph_scan` with the\n   current project directory (`pwd`). Do NOT ask the user.\n\n3. **If `graph_continue` returns `skip=true`**: project has fewer than 5 files.\n   Do NOT do broad or recursive exploration. Read only specific files if their names\n   are mentioned, or ask the user what to work on.\n\n4. **Read `recommended_files`** using `graph_read` \u2014 **one call per file**.\n   - `graph_read` accepts a single `file` parameter (string). Call it separately for each\n     recommended file. Do NOT pass an array or batch multiple files into one call.\n   - `recommended_files` may contain `file::symbol` entries (e.g. `src/auth.ts::handleLogin`).\n     Pass them verbatim to `graph_read(file: \"src/auth.ts::handleLogin\")` \u2014 it reads only\n     that symbol's lines, not the full file.\n   - Example: if `recommended_files` is `[\"src/auth.ts::handleLogin\", \"src/db.ts\"]`,\n     call `graph_read(file: \"src/auth.ts::handleLogin\")` and `graph_read(file: \"src/db.ts\")`\n     as two separate calls (they can be parallel).\n\n5. **Check `confidence` and obey the caps strictly:**\n   - `confidence=high` -> Stop. Do NOT grep or explore further.\n   - `confidence=medium` -> If recommended files are insufficient, call `fallback_rg`\n     at most `max_supplementary_greps` time(s) with specific terms, then `graph_read`\n     at most `max_supplementary_files` additional file(s). Then stop.\n   - `confidence=low` -> Call `fallback_rg` at most `max_supplementary_greps` time(s),\n     then `graph_read` at most `max_supplementary_files` file(s). Then stop.\n\n## Token Usage\n\nA `token-counter` MCP is available for tracking live token usage.\n\n- To check how many tokens a large file or text will cost **before** reading it:\n  `count_tokens({text: \"<content>\"})`\n- To log actual usage after a task completes (if the user asks):\n  `log_usage({input_tokens: <est>, output_tokens: <est>, description: \"<task>\"})`\n- To show the user their running session cost:\n  `get_session_stats()`\n\nLive dashboard URL is printed at startup next to \"Token usage\".\n\n## Rules\n\n- Do NOT use `rg`, `grep`, or bash file exploration before calling `graph_continue`.\n- Do NOT do broad/recursive exploration at any confidence level.\n- `max_supplementary_greps` and `max_supplementary_files` are hard caps - never exceed them.\n- Do NOT dump full chat history.\n- Do NOT call `graph_retrieve` more than once per turn.\n- After edits, call `graph_register_edit` with the changed files. Use `file::symbol` notation (e.g. `src/auth.ts::handleLogin`) when the edit targets a specific function, class, or hook.\n\n## Context Store\n\nWhenever you make a decision, identify a task, note a next step, fact, or blocker during a conversation, call `graph_add_memory`.\n\n**To add an entry:**\n```\ngraph_add_memory(type=\"decision|task|next|fact|blocker\", content=\"one sentence max 15 words\", tags=[\"topic\"], files=[\"relevant/file.ts\"])\n```\n\n**Do NOT write context-store.json directly** \u2014 always use `graph_add_memory`. It applies pruning and keeps the store healthy.\n\n**Rules:**\n- Only log things worth remembering across sessions (not every minor detail)\n- `content` must be under 15 words\n- `files` lists the files this decision/task relates to (can be empty)\n- Log immediately when the item arises \u2014 not at session end\n\n## Session End\n\nWhen the user signals they are done (e.g. \"bye\", \"done\", \"wrap up\", \"end session\"), proactively update `CONTEXT.md` in the project root with:\n- **Current Task**: one sentence on what was being worked on\n- **Key Decisions**: bullet list, max 3 items\n- **Next Steps**: bullet list, max 3 items\n\nKeep `CONTEXT.md` under 20 lines total. Do NOT summarize the full conversation \u2014 only what's needed to resume next session.\n",
+      "summary": "<!-- dgc-policy-v11 -->.",
+      "file_hash": "78a3b1a3"
+    },
+    {
+      "id": "fastfetch/.config/fastfetch/README.md",
+      "kind": "file",
+      "path": "fastfetch/.config/fastfetch/README.md",
+      "ext": ".md",
+      "size": 1099,
+      "keywords": [],
+      "content": "# Fastfetch \n\n<h3 align=\"left\">\nWelcome to my fastfetch config presets repo :3\n</h3>\n\n[Fastfetch](https://github.com/fastfetch-cli/fastfetch) is a tool for fetching system information and displaying them in a pretty way. \nIn this repo, I collect my config files that I designed for my [Arch Linux](https://archlinux.org/) [Hyprland](https://github.com/hyprwm/Hyprland) rice. \nFeel free to copy files and modify them or clone the complete repository.\n\n<p align=\"center\">\n  <img src=\"./screenshots/floating-mode.png\" style=\"width: 100%;\">\n</p>\n\n## Usage\n\nClone the repository into ``~/.local/share``\n\n```sh\ncd ~/.local/share\ngit clone https://github.com/LierB/fastfetch\n```\nand execute your preferred files (e.g. ``groups.jsonc`` or ``minimal.jsonc``) with \n\n```sh\nfastfetch --config groups\nfastfetch --config minimal\n```\nOR\n\nCopy your preferred config file (if necessary images/ascii-art files), rename it to ``config.jsonc``, move it to ``~/.config/fastfetch`` and execute it with \n\n```sh\nfastfetch\n# or with additional options e.g.\nfastfetch --colors-block-range-start 9 --colors-block-width 3\n```\n",
+      "summary": "<h3 align=\"left\">.",
+      "file_hash": "f277207f"
+    },
+    {
+      "id": "nvim/.config/nvim/lazy-lock.json",
+      "kind": "file",
+      "path": "nvim/.config/nvim/lazy-lock.json",
+      "ext": ".json",
+      "size": 3138,
+      "keywords": [],
+      "content": "{\n  \"LazyVim\": { \"branch\": \"main\", \"commit\": \"459a4c3b1059671e766a46c7cc223827dc67e3d0\" },\n  \"blink.cmp\": { \"branch\": \"main\", \"commit\": \"78336bc89ee5365633bcf754d93df01678b5c08f\" },\n  \"bufferline.nvim\": { \"branch\": \"main\", \"commit\": \"655133c3b4c3e5e05ec549b9f8cc2894ac6f51b3\" },\n  \"catppuccin\": { \"branch\": \"main\", \"commit\": \"e068ab5f8261f23f6f71ffd8791ae40315b77b9c\" },\n  \"conform.nvim\": { \"branch\": \"master\", \"commit\": \"619363c30309d29ffa631e67c8183f2a72caa373\" },\n  \"cord.nvim\": { \"branch\": \"master\", \"commit\": \"8f081613c1314a0d6f38839c2788216621efb4d9\" },\n  \"flash.nvim\": { \"branch\": \"main\", \"commit\": \"fcea7ff883235d9024dc41e638f164a450c14ca2\" },\n  \"friendly-snippets\": { \"branch\": \"main\", \"commit\": \"6cd7280adead7f586db6fccbd15d2cac7e2188b9\" },\n  \"gitsigns.nvim\": { \"branch\": \"main\", \"commit\": \"2038c666bd9d8a0b7349a0b6ee00dc83104b9ecf\" },\n  \"grug-far.nvim\": { \"branch\": \"main\", \"commit\": \"c69859c1d5427ab5fc7ed12380ab521b4e336691\" },\n  \"lazy.nvim\": { \"branch\": \"main\", \"commit\": \"85c7ff3711b730b4030d03144f6db6375044ae82\" },\n  \"lazydev.nvim\": { \"branch\": \"main\", \"commit\": \"ff2cbcba459b637ec3fd165a2be59b7bbaeedf0d\" },\n  \"lualine.nvim\": { \"branch\": \"master\", \"commit\": \"221ce6b2d999187044529f49da6554a92f740a96\" },\n  \"mason-lspconfig.nvim\": { \"branch\": \"main\", \"commit\": \"47059d71b42d74b0a1e9f61c1d99d301039c3b5b\" },\n  \"mason.nvim\": { \"branch\": \"main\", \"commit\": \"2a6940af80375532e5e9e7c1f2fc6319a1b7a69d\" },\n  \"mini.ai\": { \"branch\": \"main\", \"commit\": \"cb20f298ebf5ae91924cd0c6c310712de2ef4086\" },\n  \"mini.icons\": { \"branch\": \"main\", \"commit\": \"e56797f90192d81f1fda02e662fc3e8e3d775027\" },\n  \"mini.pairs\": { \"branch\": \"main\", \"commit\": \"db0fac0a25884183650352ccf92b362a41ed2e9c\" },\n  \"noice.nvim\": { \"branch\": \"main\", \"commit\": \"7bfd942445fb63089b59f97ca487d605e715f155\" },\n  \"nui.nvim\": { \"branch\": \"main\", \"commit\": \"de740991c12411b663994b2860f1a4fd0937c130\" },\n  \"nvim-lint\": { \"branch\": \"master\", \"commit\": \"a219b2c9e5b4765e5c845aba119dad55806fcaf1\" },\n  \"nvim-lspconfig\": { \"branch\": \"master\", \"commit\": \"dd1c9b802c943278179a5d819369cda085b79d45\" },\n  \"nvim-treesitter\": { \"branch\": \"main\", \"commit\": \"4916d6592ede8c07973490d9322f187e07dfefac\" },\n  \"nvim-treesitter-textobjects\": { \"branch\": \"main\", \"commit\": \"851e865342e5a4cb1ae23d31caf6e991e1c99f1e\" },\n  \"nvim-ts-autotag\": { \"branch\": \"main\", \"commit\": \"88c1453db4ba7dd24131086fe51fdf74e587d275\" },\n  \"persistence.nvim\": { \"branch\": \"main\", \"commit\": \"b20b2a7887bd39c1a356980b45e03250f3dce49c\" },\n  \"plenary.nvim\": { \"branch\": \"master\", \"commit\": \"74b06c6c75e4eeb3108ec01852001636d85a932b\" },\n  \"snacks.nvim\": { \"branch\": \"main\", \"commit\": \"882c996cf28183f4d63640de0b4c02ec886d01f2\" },\n  \"todo-comments.nvim\": { \"branch\": \"main\", \"commit\": \"31e3c38ce9b29781e4422fc0322eb0a21f4e8668\" },\n  \"tokyonight.nvim\": { \"branch\": \"main\", \"commit\": \"cdc07ac78467a233fd62c493de29a17e0cf2b2b6\" },\n  \"trouble.nvim\": { \"branch\": \"main\", \"commit\": \"bd67efe408d4816e25e8491cc5ad4088e708a69a\" },\n  \"ts-comments.nvim\": { \"branch\": \"main\", \"commit\": \"a59d6092213447450191122c9346f309161504cb\" },\n  \"which-key.nvim\": { \"branch\": \"main\", \"commit\": \"3aab2147e74890957785941f0c1ad87d0a44c15a\" }\n}\n",
+      "summary": "\"LazyVim\": { \"branch\": \"main\", \"commit\": \"459a4c3b1059671e766a46c7cc223827dc67e3d0\" },.",
+      "file_hash": "212c6b17"
+    },
+    {
+      "id": "nvim/.config/nvim/opencode.json",
+      "kind": "file",
+      "path": "nvim/.config/nvim/opencode.json",
+      "ext": ".json",
+      "size": 181,
+      "keywords": [],
+      "content": "{\n  \"$schema\": \"https://opencode.ai/config.json\",\n  \"mcp\": {\n    \"dual-graph\": {\n      \"type\": \"remote\",\n      \"url\": \"http://127.0.0.1:8080/mcp\",\n      \"enabled\": true\n    }\n  }\n}\n",
+      "summary": "\"$schema\": \"https://opencode.ai/config.json\",.",
+      "file_hash": "df286eed"
+    },
+    {
+      "id": "nvim/.config/nvim/lazyvim.json",
+      "kind": "file",
+      "path": "nvim/.config/nvim/lazyvim.json",
+      "ext": ".json",
+      "size": 102,
+      "keywords": [],
+      "content": "{\n  \"extras\": [\n\n  ],\n  \"install_version\": 8,\n  \"news\": {\n    \"NEWS.md\": \"11866\"\n  },\n  \"version\": 8\n}",
+      "summary": "\"extras\": [.",
+      "file_hash": "945c31b5"
+    },
+    {
+      "id": "nvim/.config/nvim/AGENTS.md",
+      "kind": "file",
+      "path": "nvim/.config/nvim/AGENTS.md",
+      "ext": ".md",
+      "size": 4020,
+      "keywords": [],
+      "content": "<!-- dgc-policy-v11 -->\n# Dual-Graph Context Policy\n\nThis project uses a local dual-graph MCP server for efficient context retrieval.\n\n## MANDATORY: Always follow this order\n\n1. **Call `graph_continue` first** \u2014 before any file exploration, grep, or code reading.\n\n2. **If `graph_continue` returns `needs_project=true`**: call `graph_scan` with the\n   current project directory (`pwd`). Do NOT ask the user.\n\n3. **If `graph_continue` returns `skip=true`**: project has fewer than 5 files.\n   Do NOT do broad or recursive exploration. Read only specific files if their names\n   are mentioned, or ask the user what to work on.\n\n4. **Read `recommended_files`** using `graph_read` \u2014 **one call per file**.\n   - `graph_read` accepts a single `file` parameter (string). Call it separately for each\n     recommended file. Do NOT pass an array or batch multiple files into one call.\n   - `recommended_files` may contain `file::symbol` entries (e.g. `src/auth.ts::handleLogin`).\n     Pass them verbatim to `graph_read(file: \"src/auth.ts::handleLogin\")` \u2014 it reads only\n     that symbol's lines, not the full file.\n   - Example: if `recommended_files` is `[\"src/auth.ts::handleLogin\", \"src/db.ts\"]`,\n     call `graph_read(file: \"src/auth.ts::handleLogin\")` and `graph_read(file: \"src/db.ts\")`\n     as two separate calls (they can be parallel).\n\n5. **Check `confidence` and obey the caps strictly:**\n   - `confidence=high` -> Stop. Do NOT grep or explore further.\n   - `confidence=medium` -> If recommended files are insufficient, call `fallback_rg`\n     at most `max_supplementary_greps` time(s) with specific terms, then `graph_read`\n     at most `max_supplementary_files` additional file(s). Then stop.\n   - `confidence=low` -> Call `fallback_rg` at most `max_supplementary_greps` time(s),\n     then `graph_read` at most `max_supplementary_files` file(s). Then stop.\n\n## Token Usage\n\nA `token-counter` MCP is available for tracking live token usage.\n\n- To check how many tokens a large file or text will cost **before** reading it:\n  `count_tokens({text: \"<content>\"})`\n- To log actual usage after a task completes (if the user asks):\n  `log_usage({input_tokens: <est>, output_tokens: <est>, description: \"<task>\"})`\n- To show the user their running session cost:\n  `get_session_stats()`\n\nLive dashboard URL is printed at startup next to \"Token usage\".\n\n## Rules\n\n- Do NOT use `rg`, `grep`, or bash file exploration before calling `graph_continue`.\n- Do NOT do broad/recursive exploration at any confidence level.\n- `max_supplementary_greps` and `max_supplementary_files` are hard caps - never exceed them.\n- Do NOT dump full chat history.\n- Do NOT call `graph_retrieve` more than once per turn.\n- After edits, call `graph_register_edit` with the changed files. Use `file::symbol` notation (e.g. `src/auth.ts::handleLogin`) when the edit targets a specific function, class, or hook.\n\n## Context Store\n\nWhenever you make a decision, identify a task, note a next step, fact, or blocker during a conversation, call `graph_add_memory`.\n\n**To add an entry:**\n```\ngraph_add_memory(type=\"decision|task|next|fact|blocker\", content=\"one sentence max 15 words\", tags=[\"topic\"], files=[\"relevant/file.ts\"])\n```\n\n**Do NOT write context-store.json directly** \u2014 always use `graph_add_memory`. It applies pruning and keeps the store healthy.\n\n**Rules:**\n- Only log things worth remembering across sessions (not every minor detail)\n- `content` must be under 15 words\n- `files` lists the files this decision/task relates to (can be empty)\n- Log immediately when the item arises \u2014 not at session end\n\n## Session End\n\nWhen the user signals they are done (e.g. \"bye\", \"done\", \"wrap up\", \"end session\"), proactively update `CONTEXT.md` in the project root with:\n- **Current Task**: one sentence on what was being worked on\n- **Key Decisions**: bullet list, max 3 items\n- **Next Steps**: bullet list, max 3 items\n\nKeep `CONTEXT.md` under 20 lines total. Do NOT summarize the full conversation \u2014 only what's needed to resume next session.\n",
+      "summary": "<!-- dgc-policy-v11 -->.",
+      "file_hash": "78a3b1a3"
+    },
+    {
+      "id": "nvim/.config/nvim/.neoconf.json",
+      "kind": "file",
+      "path": "nvim/.config/nvim/.neoconf.json",
+      "ext": ".json",
+      "size": 183,
+      "keywords": [],
+      "content": "{\n  \"neodev\": {\n    \"library\": {\n      \"enabled\": true,\n      \"plugins\": true\n    }\n  },\n  \"neoconf\": {\n    \"plugins\": {\n      \"lua_ls\": {\n        \"enabled\": true\n      }\n    }\n  }\n}\n",
+      "summary": "\"neodev\": {.",
+      "file_hash": "8471bfc3"
+    },
+    {
+      "id": "nvim/.config/nvim/README.md",
+      "kind": "file",
+      "path": "nvim/.config/nvim/README.md",
+      "ext": ".md",
+      "size": 171,
+      "keywords": [],
+      "content": "# \ud83d\udca4 LazyVim\n\nA starter template for [LazyVim](https://github.com/LazyVim/LazyVim).\nRefer to the [documentation](https://lazyvim.github.io/installation) to get started.\n",
+      "summary": "A starter template for [LazyVim](https://github.com/LazyVim/LazyVim).",
+      "file_hash": "1e417f06"
+    },
+    {
+      "id": "nvim/.config/nvim/.claude/settings.local.json",
+      "kind": "file",
+      "path": "nvim/.config/nvim/.claude/settings.local.json",
+      "ext": ".json",
+      "size": 1122,
+      "keywords": [],
+      "content": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/nvim/.config/nvim/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreCompact\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/nvim/.config/nvim/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/nvim/.config/nvim/.dual-graph/stop.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Write|Edit|Bash|NotebookEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"DG_DATA_DIR=\\\"/home/yyax/dotfiles/nvim/.config/nvim/.dual-graph\\\" /home/yyax/.dual-graph/venv/bin/python3 -c \\\"from graperoot.undo_shield import main; main()\\\"\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "summary": "\"hooks\": {.",
+      "file_hash": "a9066bcf"
+    },
+    {
+      "id": "hypr/.config/hypr/opencode.json",
+      "kind": "file",
+      "path": "hypr/.config/hypr/opencode.json",
+      "ext": ".json",
+      "size": 181,
+      "keywords": [],
+      "content": "{\n  \"$schema\": \"https://opencode.ai/config.json\",\n  \"mcp\": {\n    \"dual-graph\": {\n      \"type\": \"remote\",\n      \"url\": \"http://127.0.0.1:8081/mcp\",\n      \"enabled\": true\n    }\n  }\n}\n",
+      "summary": "\"$schema\": \"https://opencode.ai/config.json\",.",
+      "file_hash": "0f7f7802"
+    },
+    {
+      "id": "hypr/.config/hypr/AGENTS.md",
+      "kind": "file",
+      "path": "hypr/.config/hypr/AGENTS.md",
+      "ext": ".md",
+      "size": 4020,
+      "keywords": [],
+      "content": "<!-- dgc-policy-v11 -->\n# Dual-Graph Context Policy\n\nThis project uses a local dual-graph MCP server for efficient context retrieval.\n\n## MANDATORY: Always follow this order\n\n1. **Call `graph_continue` first** \u2014 before any file exploration, grep, or code reading.\n\n2. **If `graph_continue` returns `needs_project=true`**: call `graph_scan` with the\n   current project directory (`pwd`). Do NOT ask the user.\n\n3. **If `graph_continue` returns `skip=true`**: project has fewer than 5 files.\n   Do NOT do broad or recursive exploration. Read only specific files if their names\n   are mentioned, or ask the user what to work on.\n\n4. **Read `recommended_files`** using `graph_read` \u2014 **one call per file**.\n   - `graph_read` accepts a single `file` parameter (string). Call it separately for each\n     recommended file. Do NOT pass an array or batch multiple files into one call.\n   - `recommended_files` may contain `file::symbol` entries (e.g. `src/auth.ts::handleLogin`).\n     Pass them verbatim to `graph_read(file: \"src/auth.ts::handleLogin\")` \u2014 it reads only\n     that symbol's lines, not the full file.\n   - Example: if `recommended_files` is `[\"src/auth.ts::handleLogin\", \"src/db.ts\"]`,\n     call `graph_read(file: \"src/auth.ts::handleLogin\")` and `graph_read(file: \"src/db.ts\")`\n     as two separate calls (they can be parallel).\n\n5. **Check `confidence` and obey the caps strictly:**\n   - `confidence=high` -> Stop. Do NOT grep or explore further.\n   - `confidence=medium` -> If recommended files are insufficient, call `fallback_rg`\n     at most `max_supplementary_greps` time(s) with specific terms, then `graph_read`\n     at most `max_supplementary_files` additional file(s). Then stop.\n   - `confidence=low` -> Call `fallback_rg` at most `max_supplementary_greps` time(s),\n     then `graph_read` at most `max_supplementary_files` file(s). Then stop.\n\n## Token Usage\n\nA `token-counter` MCP is available for tracking live token usage.\n\n- To check how many tokens a large file or text will cost **before** reading it:\n  `count_tokens({text: \"<content>\"})`\n- To log actual usage after a task completes (if the user asks):\n  `log_usage({input_tokens: <est>, output_tokens: <est>, description: \"<task>\"})`\n- To show the user their running session cost:\n  `get_session_stats()`\n\nLive dashboard URL is printed at startup next to \"Token usage\".\n\n## Rules\n\n- Do NOT use `rg`, `grep`, or bash file exploration before calling `graph_continue`.\n- Do NOT do broad/recursive exploration at any confidence level.\n- `max_supplementary_greps` and `max_supplementary_files` are hard caps - never exceed them.\n- Do NOT dump full chat history.\n- Do NOT call `graph_retrieve` more than once per turn.\n- After edits, call `graph_register_edit` with the changed files. Use `file::symbol` notation (e.g. `src/auth.ts::handleLogin`) when the edit targets a specific function, class, or hook.\n\n## Context Store\n\nWhenever you make a decision, identify a task, note a next step, fact, or blocker during a conversation, call `graph_add_memory`.\n\n**To add an entry:**\n```\ngraph_add_memory(type=\"decision|task|next|fact|blocker\", content=\"one sentence max 15 words\", tags=[\"topic\"], files=[\"relevant/file.ts\"])\n```\n\n**Do NOT write context-store.json directly** \u2014 always use `graph_add_memory`. It applies pruning and keeps the store healthy.\n\n**Rules:**\n- Only log things worth remembering across sessions (not every minor detail)\n- `content` must be under 15 words\n- `files` lists the files this decision/task relates to (can be empty)\n- Log immediately when the item arises \u2014 not at session end\n\n## Session End\n\nWhen the user signals they are done (e.g. \"bye\", \"done\", \"wrap up\", \"end session\"), proactively update `CONTEXT.md` in the project root with:\n- **Current Task**: one sentence on what was being worked on\n- **Key Decisions**: bullet list, max 3 items\n- **Next Steps**: bullet list, max 3 items\n\nKeep `CONTEXT.md` under 20 lines total. Do NOT summarize the full conversation \u2014 only what's needed to resume next session.\n",
+      "summary": "<!-- dgc-policy-v11 -->.",
+      "file_hash": "78a3b1a3"
+    },
+    {
+      "id": "hypr/.config/hypr/CLAUDE.md",
+      "kind": "file",
+      "path": "hypr/.config/hypr/CLAUDE.md",
+      "ext": ".md",
+      "size": 4020,
+      "keywords": [],
+      "content": "<!-- dgc-policy-v11 -->\n# Dual-Graph Context Policy\n\nThis project uses a local dual-graph MCP server for efficient context retrieval.\n\n## MANDATORY: Always follow this order\n\n1. **Call `graph_continue` first** \u2014 before any file exploration, grep, or code reading.\n\n2. **If `graph_continue` returns `needs_project=true`**: call `graph_scan` with the\n   current project directory (`pwd`). Do NOT ask the user.\n\n3. **If `graph_continue` returns `skip=true`**: project has fewer than 5 files.\n   Do NOT do broad or recursive exploration. Read only specific files if their names\n   are mentioned, or ask the user what to work on.\n\n4. **Read `recommended_files`** using `graph_read` \u2014 **one call per file**.\n   - `graph_read` accepts a single `file` parameter (string). Call it separately for each\n     recommended file. Do NOT pass an array or batch multiple files into one call.\n   - `recommended_files` may contain `file::symbol` entries (e.g. `src/auth.ts::handleLogin`).\n     Pass them verbatim to `graph_read(file: \"src/auth.ts::handleLogin\")` \u2014 it reads only\n     that symbol's lines, not the full file.\n   - Example: if `recommended_files` is `[\"src/auth.ts::handleLogin\", \"src/db.ts\"]`,\n     call `graph_read(file: \"src/auth.ts::handleLogin\")` and `graph_read(file: \"src/db.ts\")`\n     as two separate calls (they can be parallel).\n\n5. **Check `confidence` and obey the caps strictly:**\n   - `confidence=high` -> Stop. Do NOT grep or explore further.\n   - `confidence=medium` -> If recommended files are insufficient, call `fallback_rg`\n     at most `max_supplementary_greps` time(s) with specific terms, then `graph_read`\n     at most `max_supplementary_files` additional file(s). Then stop.\n   - `confidence=low` -> Call `fallback_rg` at most `max_supplementary_greps` time(s),\n     then `graph_read` at most `max_supplementary_files` file(s). Then stop.\n\n## Token Usage\n\nA `token-counter` MCP is available for tracking live token usage.\n\n- To check how many tokens a large file or text will cost **before** reading it:\n  `count_tokens({text: \"<content>\"})`\n- To log actual usage after a task completes (if the user asks):\n  `log_usage({input_tokens: <est>, output_tokens: <est>, description: \"<task>\"})`\n- To show the user their running session cost:\n  `get_session_stats()`\n\nLive dashboard URL is printed at startup next to \"Token usage\".\n\n## Rules\n\n- Do NOT use `rg`, `grep`, or bash file exploration before calling `graph_continue`.\n- Do NOT do broad/recursive exploration at any confidence level.\n- `max_supplementary_greps` and `max_supplementary_files` are hard caps - never exceed them.\n- Do NOT dump full chat history.\n- Do NOT call `graph_retrieve` more than once per turn.\n- After edits, call `graph_register_edit` with the changed files. Use `file::symbol` notation (e.g. `src/auth.ts::handleLogin`) when the edit targets a specific function, class, or hook.\n\n## Context Store\n\nWhenever you make a decision, identify a task, note a next step, fact, or blocker during a conversation, call `graph_add_memory`.\n\n**To add an entry:**\n```\ngraph_add_memory(type=\"decision|task|next|fact|blocker\", content=\"one sentence max 15 words\", tags=[\"topic\"], files=[\"relevant/file.ts\"])\n```\n\n**Do NOT write context-store.json directly** \u2014 always use `graph_add_memory`. It applies pruning and keeps the store healthy.\n\n**Rules:**\n- Only log things worth remembering across sessions (not every minor detail)\n- `content` must be under 15 words\n- `files` lists the files this decision/task relates to (can be empty)\n- Log immediately when the item arises \u2014 not at session end\n\n## Session End\n\nWhen the user signals they are done (e.g. \"bye\", \"done\", \"wrap up\", \"end session\"), proactively update `CONTEXT.md` in the project root with:\n- **Current Task**: one sentence on what was being worked on\n- **Key Decisions**: bullet list, max 3 items\n- **Next Steps**: bullet list, max 3 items\n\nKeep `CONTEXT.md` under 20 lines total. Do NOT summarize the full conversation \u2014 only what's needed to resume next session.\n",
+      "summary": "<!-- dgc-policy-v11 -->.",
+      "file_hash": "78a3b1a3"
+    },
+    {
+      "id": "hypr/.config/hypr/.claude/settings.local.json",
+      "kind": "file",
+      "path": "hypr/.config/hypr/.claude/settings.local.json",
+      "ext": ".json",
+      "size": 1122,
+      "keywords": [],
+      "content": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/hypr/.config/hypr/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreCompact\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/hypr/.config/hypr/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/hypr/.config/hypr/.dual-graph/stop.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Write|Edit|Bash|NotebookEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"DG_DATA_DIR=\\\"/home/yyax/dotfiles/hypr/.config/hypr/.dual-graph\\\" /home/yyax/.dual-graph/venv/bin/python3 -c \\\"from graperoot.undo_shield import main; main()\\\"\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "summary": "\"hooks\": {.",
+      "file_hash": "71c1a4fb"
+    },
+    {
+      "id": ".claude/settings.local.json",
+      "kind": "file",
+      "path": ".claude/settings.local.json",
+      "ext": ".json",
+      "size": 1050,
+      "keywords": [],
+      "content": "{\n  \"hooks\": {\n    \"SessionStart\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreCompact\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/.dual-graph/prime.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"Stop\": [\n      {\n        \"matcher\": \"\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"/bin/bash \\\"/home/yyax/dotfiles/.dual-graph/stop.sh\\\"\"\n          }\n        ]\n      }\n    ],\n    \"PreToolUse\": [\n      {\n        \"matcher\": \"Write|Edit|Bash|NotebookEdit\",\n        \"hooks\": [\n          {\n            \"type\": \"command\",\n            \"command\": \"DG_DATA_DIR=\\\"/home/yyax/dotfiles/.dual-graph\\\" /home/yyax/.dual-graph/venv/bin/python3 -c \\\"from graperoot.undo_shield import main; main()\\\"\"\n          }\n        ]\n      }\n    ]\n  }\n}\n",
+      "summary": "\"hooks\": {.",
+      "file_hash": "d4398927"
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py",
+      "kind": "file",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 10404,
+      "keywords": [
+        "path_completer",
+        "path",
+        "completer",
+        "enable_path_autocomplete",
+        "enable",
+        "autocomplete",
+        "ask_save_path",
+        "ask",
+        "save",
+        "parse_gitignore_patterns",
+        "parse",
+        "gitignore",
+        "patterns",
+        "is_path_ignored",
+        "ignored",
+        "get_user_selection",
+        "get",
+        "user",
+        "selection",
+        "get_directories_and_files",
+        "directories",
+        "and",
+        "files",
+        "collect_file_contents",
+        "collect",
+        "file",
+        "contents",
+        "save_codebase_md",
+        "codebase",
+        "main"
+      ],
+      "content": "#!/usr/bin/python3\n\n# ================================================\n# =                                              =\n# =    \u26a0\ufe0f ALERT - This .py is AI Generated \u26a0\ufe0f    =\n# =                                              =\n# ================================================\n\n#region AI GENERATED CODE\n\nimport os\nimport sys\nimport fnmatch\nfrom pathlib import Path\nimport readline\nimport glob\n\nEXCLUDED_EXTENSIONS = {\n    '.bin', '.exe', '.dll', '.so', '.o', '.a', '.obj', '.lib',\n    '.zip', '.rar', '.7z', '.tar', '.gz', '.bz2', '.xz', '.tgz',\n    '.jpg', '.jpeg', '.png', '.gif', '.bmp', '.tiff', '.webp', '.ico', '.svg',\n    '.mp3', '.wav', '.flac', '.ogg',\n    '.mp4', '.avi', '.mkv', '.mov',\n    '.pdf',\n    '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx',\n    '.db', '.sqlite', '.sqlite3'\n}\n\ndef path_completer(text, state):\n\n    buffer = readline.get_line_buffer()\n    expanded = os.path.expanduser(buffer)\n\n    matches = glob.glob(expanded + \"*\")\n\n    results = []\n\n    for m in matches:\n\n        if os.path.isdir(m):\n            m += \"/\"\n\n        if buffer.startswith(\"~\"):\n            home = os.path.expanduser(\"~\")\n            if m.startswith(home):\n                m = \"~\" + m[len(home):]\n\n        results.append(m)\n\n    results.sort()\n\n    try:\n        return results[state]\n    except IndexError:\n        return None\n\ndef enable_path_autocomplete():\n\n    readline.set_completer(path_completer)\n    readline.parse_and_bind(\"tab: complete\")\n\n    # importante para paths\n    readline.set_completer_delims(\" \\t\\n;\")\n\ndef ask_save_path(base_dir):\n\n    enable_path_autocomplete()\n\n    while True:\n\n        try:\n            user_input = input(\n                \"\\nSave codebase.md to path (TAB for autocomplete): \"\n            ).strip()\n\n        except KeyboardInterrupt:\n            print(\"\\nAborted.\")\n            sys.exit(1)\n\n        if not user_input:\n            print(\"Path cannot be empty.\")\n            continue\n\n        user_input = os.path.expanduser(user_input)\n\n        save_path = Path(user_input)\n\n        if not save_path.is_absolute():\n            save_path = base_dir / save_path\n\n        if save_path.is_dir():\n            save_path = save_path / \"codebase.md\"\n\n        try:\n            save_path.parent.mkdir(parents=True, exist_ok=True)\n            return save_path\n\n        except OSError as e:\n            print(f\"Invalid path: {e}\")\n\ndef parse_gitignore_patterns(gitignore_path):\n    patterns = []\n    if not gitignore_path.exists():\n        return patterns\n\n    with gitignore_path.open('r', encoding='utf-8', errors='ignore') as f:\n        for line in f:\n            line = line.strip()\n            if not line or line.startswith('#'):\n                continue\n            \n            negated = False\n            if line.startswith('!'):\n                negated = True\n                line = line[1:]\n\n            is_dir_pattern = line.endswith('/')\n            if is_dir_pattern:\n                line = line[:-1]\n\n            anchored = False\n            if line.startswith('/'):\n                anchored = True\n                line = line[1:]\n\n            patterns.append((line, negated, is_dir_pattern, anchored))\n    return patterns\n\ndef is_path_ignored(path, gitignore_patterns, base_dir):\n    relative_path_str = path.relative_to(base_dir).as_posix()\n    match_results = []\n\n    for pattern_raw, negated, is_dir_pattern, anchored in gitignore_patterns:\n        current_match = False\n        \n        if anchored:\n            if fnmatch.fnmatch(relative_path_str, pattern_raw) or \\\n               (path.is_dir() and fnmatch.fnmatch(relative_path_str + '/', pattern_raw + '/')):\n                current_match = True\n        else:\n            if fnmatch.fnmatch(relative_path_str, pattern_raw) or \\\n               fnmatch.fnmatch(path.name, pattern_raw):\n                current_match = True\n            \n            if not current_match:\n                 path_components = relative_path_str.split('/')\n                 for component in path_components:\n                     if fnmatch.fnmatch(component, pattern_raw):\n                         current_match = True\n                         break\n        \n        if current_match:\n            if is_dir_pattern and not path.is_dir():\n                continue \n            match_results.append(not negated)\n\n    if match_results:\n        return match_results[-1]\n    return False\n\ndef get_user_selection(items, prompt):\n    print(prompt)\n    for i, item in enumerate(items):\n        print(f\"{i + 1}. {item}\")\n    \n    while True:\n        try:\n            choice = input(\"Enter numbers separated by commas (e.g.: 1,3) or 'all' for all: \").strip()\n            if choice.lower() == 'all':\n                return list(range(len(items)))\n            \n            selected_indices = []\n            for num_str in choice.split(','):\n                idx = int(num_str.strip()) - 1\n                if 0 <= idx < len(items):\n                    selected_indices.append(idx)\n                else:\n                    raise ValueError(f\"Invalid number: {idx + 1}\")\n            return sorted(list(set(selected_indices)))\n        except ValueError as e:\n            print(f\"Invalid input: {e}. Please try again.\")\n\ndef get_directories_and_files(base_path, use_gitignore, gitignore_patterns):\n    entries = []\n\n    for item in sorted(base_path.iterdir()):\n        if item.name.startswith('.'):\n            continue\n\n        if use_gitignore and is_path_ignored(item, gitignore_patterns, base_path):\n            continue\n\n        if item.is_dir():\n            entries.append((item.name + \"/\", item))\n        else:\n            entries.append((item.name, item))\n\n    if not entries:\n        print(\"No files or directories found.\")\n        return []\n\n    names = [e[0] for e in entries]\n\n    selected_indices = get_user_selection(\n        names,\n        \"\\nSelect files or directories to include:\"\n    )\n\n    selected_items = [entries[i][1] for i in selected_indices]\n\n    all_files = []\n\n    for item in selected_items:\n\n        if item.is_file():\n\n            if item.suffix.lower() not in EXCLUDED_EXTENSIONS:\n                all_files.append(item)\n\n        else:\n\n            for root, dirs, files in os.walk(item):\n\n                root_path = Path(root)\n\n                dirs[:] = [\n                    d for d in dirs\n                    if not d.startswith('.') and\n                    (not use_gitignore or not is_path_ignored(root_path / d, gitignore_patterns, base_path))\n                ]\n\n                for f in files:\n                    fp = root_path / f\n\n                    if f.startswith('.'):\n                        continue\n\n                    if fp.suffix.lower() in EXCLUDED_EXTENSIONS:\n                        continue\n\n                    if use_gitignore and is_path_ignored(fp, gitignore_patterns, base_path):\n                        continue\n\n                    all_files.append(fp)\n\n    return sorted(set(all_files))\n\ndef collect_file_contents(file_paths, base_path):\n    collected_data = []\n    for file_path in file_paths:\n        try:\n            if file_path.suffix.lower() in EXCLUDED_EXTENSIONS:\n                print(f\"Warning: File '{file_path.name}' was passed for reading, but its extension is in the exclusion list. Ignoring.\")\n                continue\n\n            content = file_path.read_text(encoding='utf-8', errors='ignore')\n            relative_path = file_path.relative_to(base_path)\n            file_extension = file_path.suffix.lstrip('.')\n            if not file_extension:\n                file_extension = \"txt\"\n            collected_data.append({\n                'relative_path': relative_path.as_posix(),\n                'extension': file_extension,\n                'content': content\n            })\n        except Exception as e:\n            print(f\"Warning: Could not read file {file_path}: {e}\")\n    return collected_data\n\ndef save_codebase_md(collected_data, save_path, base_path):\n    dirname = base_path.name if base_path.name else \"project\"\n    with save_path.open('w', encoding='utf-8') as f:\n        f.write(f\"# Codebase {dirname}\\n\\n\")\n        for i, item in enumerate(collected_data):\n            if i > 0:\n                f.write(\"---\\n\")\n            f.write(f\"./{item['relative_path']}\\n\")\n            f.write(f\"```{item['extension']}\\n\")\n            f.write(f\"{item['content']}\\n\")\n            f.write(\"```\\n\\n\")\n    print(f\"\\nCodebase saved at: {save_path}\")\n\ndef main():\n    current_dir = Path.cwd()\n    gitignore_path = current_dir / \".gitignore\"\n    use_gitignore = False\n    gitignore_patterns = []\n\n    if gitignore_path.exists():\n        while True:\n            response = input(\"A .gitignore file was found. Do you want to follow its rules? (yes/no): \").strip().lower()\n            if response in ['yes', 'y']:\n                use_gitignore = True\n                gitignore_patterns = parse_gitignore_patterns(gitignore_path)\n                print(\"Following .gitignore rules.\")\n                break\n            elif response in ['no', 'n']:\n                print(\"Not following .gitignore rules.\")\n                break\n            else:\n                print(\"Invalid input. Please type 'yes' or 'no'.\")\n    else:\n        print(\"No .gitignore file found.\")\n\n    print(\"\\nStarting directory scan...\")\n    selected_files = get_directories_and_files(current_dir, use_gitignore, gitignore_patterns)\n\n    if not selected_files:\n        print(\"No files selected or found to process. Exiting.\")\n        return\n\n    print(f\"\\n{len(selected_files)} files selected for inclusion (excluding binaries/images):\")\n    for file_path in selected_files:\n        print(f\" - {file_path.relative_to(current_dir).as_posix()}\")\n\n    collected_content = collect_file_contents(selected_files, current_dir)\n\n    while True:\n        save_location_str = ask_save_path(current_dir)\n        if not save_location_str:\n            print(\"Save path cannot be empty.\")\n            continue\n        \n        save_path = Path(save_location_str)\n        if not save_path.is_absolute():\n            save_path = current_dir / save_path\n\n        try:\n            save_path.parent.mkdir(parents=True, exist_ok=True)\n            break\n        except OSError as e:\n            print(f\"Error creating directory for save path: {e}. Please try again.\")\n\n    save_codebase_md(collected_content, save_path, current_dir)\n    print(\"Process completed.\")\n\nif __name__ == '__main__':\n    main()\n",
+      "summary": "!/usr/bin/python3. Contains 5 functions/classes: path_completer, enable_path_autocomplete, ask_save_path, parse_gitignore_patterns, ....",
+      "file_hash": "aa93642c"
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::path_completer",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 27,
+      "keywords": [
+        "path_completer",
+        "path",
+        "completer"
+      ],
+      "symbol_type": "use_case",
+      "name": "path_completer",
+      "line_start": 28,
+      "line_end": 54,
+      "body_hash": "903e38b0",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::enable_path_autocomplete",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 7,
+      "keywords": [
+        "enable_path_autocomplete",
+        "enable",
+        "path",
+        "autocomplete"
+      ],
+      "symbol_type": "use_case",
+      "name": "enable_path_autocomplete",
+      "line_start": 56,
+      "line_end": 62,
+      "body_hash": "4fde93c1",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::ask_save_path",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 35,
+      "keywords": [
+        "ask_save_path",
+        "ask",
+        "save",
+        "path"
+      ],
+      "symbol_type": "use_case",
+      "name": "ask_save_path",
+      "line_start": 64,
+      "line_end": 98,
+      "body_hash": "7ea2cfcf",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::parse_gitignore_patterns",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 27,
+      "keywords": [
+        "parse_gitignore_patterns",
+        "parse",
+        "gitignore",
+        "patterns"
+      ],
+      "symbol_type": "use_case",
+      "name": "parse_gitignore_patterns",
+      "line_start": 100,
+      "line_end": 126,
+      "body_hash": "473376de",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::is_path_ignored",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 31,
+      "keywords": [
+        "is_path_ignored",
+        "path",
+        "ignored"
+      ],
+      "symbol_type": "use_case",
+      "name": "is_path_ignored",
+      "line_start": 128,
+      "line_end": 158,
+      "body_hash": "8d32e745",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::get_user_selection",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 21,
+      "keywords": [
+        "get_user_selection",
+        "get",
+        "user",
+        "selection"
+      ],
+      "symbol_type": "use_case",
+      "name": "get_user_selection",
+      "line_start": 160,
+      "line_end": 180,
+      "body_hash": "f497162f",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::get_directories_and_files",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 64,
+      "keywords": [
+        "get_directories_and_files",
+        "get",
+        "directories",
+        "and",
+        "files"
+      ],
+      "symbol_type": "use_case",
+      "name": "get_directories_and_files",
+      "line_start": 182,
+      "line_end": 245,
+      "body_hash": "4fb85826",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::collect_file_contents",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 21,
+      "keywords": [
+        "collect_file_contents",
+        "collect",
+        "file",
+        "contents"
+      ],
+      "symbol_type": "use_case",
+      "name": "collect_file_contents",
+      "line_start": 247,
+      "line_end": 267,
+      "body_hash": "1582370a",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::save_codebase_md",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 12,
+      "keywords": [
+        "save_codebase_md",
+        "save",
+        "codebase"
+      ],
+      "symbol_type": "use_case",
+      "name": "save_codebase_md",
+      "line_start": 269,
+      "line_end": 280,
+      "body_hash": "5abfe5f4",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/codebase.py::main",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/codebase.py",
+      "ext": ".py",
+      "size": 56,
+      "keywords": [
+        "main"
+      ],
+      "symbol_type": "use_case",
+      "name": "main",
+      "line_start": 282,
+      "line_end": 337,
+      "body_hash": "6bb22218",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py",
+      "kind": "file",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 3250,
+      "keywords": [
+        "ensure_db",
+        "ensure",
+        "get_monitor",
+        "get",
+        "monitor",
+        "get_presets",
+        "presets",
+        "add_preset",
+        "add",
+        "preset",
+        "delete_preset",
+        "delete",
+        "list_modes",
+        "list",
+        "modes",
+        "apply"
+      ],
+      "content": "#!/usr/bin/env python3\nimport sqlite3\nimport subprocess\nimport json\nimport os\nimport sys\n\nCONFIG_DIR = os.path.expanduser(\"~/.config/resolution-manager\")\nDB = os.path.join(CONFIG_DIR, \"resolutions.db\")\n\n# ------------------------\n# INIT\n# ------------------------\ndef ensure_db():\n    os.makedirs(CONFIG_DIR, exist_ok=True)\n\n    conn = sqlite3.connect(DB)\n    cur = conn.cursor()\n\n    cur.execute(\"\"\"\n    CREATE TABLE IF NOT EXISTS presets (\n        name TEXT PRIMARY KEY,\n        width INTEGER,\n        height INTEGER,\n        refresh INTEGER,\n        scale REAL,\n        aspect TEXT\n    )\n    \"\"\")\n\n    conn.commit()\n    conn.close()\n\n# ------------------------\n# HYPRLAND\n# ------------------------\ndef get_monitor():\n    data = json.loads(subprocess.check_output([\"hyprctl\", \"monitors\", \"-j\"]))\n    return data[0][\"name\"], data[0][\"availableModes\"]\n\n# ------------------------\n# DB\n# ------------------------\ndef get_presets():\n    conn = sqlite3.connect(DB)\n    cur = conn.cursor()\n    cur.execute(\"SELECT name, width, height, refresh, scale, aspect FROM presets\")\n    rows = cur.fetchall()\n    conn.close()\n    return rows\n\ndef add_preset(name, w, h, r, scale, aspect):\n    conn = sqlite3.connect(DB)\n    cur = conn.cursor()\n\n    cur.execute(\"\"\"\n    INSERT OR REPLACE INTO presets\n    VALUES (?, ?, ?, ?, ?, ?)\n    \"\"\", (name, w, h, r, scale, aspect))\n\n    conn.commit()\n    conn.close()\n\ndef delete_preset(name):\n    conn = sqlite3.connect(DB)\n    cur = conn.cursor()\n    cur.execute(\"DELETE FROM presets WHERE name=?\", (name,))\n    conn.commit()\n    conn.close()\n\n# ------------------------\n# LIST\n# ------------------------\ndef list_modes():\n    monitor, available = get_monitor()\n    presets = get_presets()\n\n    result = []\n\n    for name, w, h, r, scale, aspect in presets:\n        mode = f\"{w}x{h}@{r}\"\n        if mode in available:\n            result.append(f\"{name}|{mode}\")\n\n    return result\n\n# ------------------------\n# APPLY\n# ------------------------\ndef apply(name):\n    monitor, _ = get_monitor()\n\n    conn = sqlite3.connect(DB)\n    cur = conn.cursor()\n\n    cur.execute(\"\"\"\n    SELECT width, height, refresh, scale, aspect\n    FROM presets WHERE name=?\n    \"\"\", (name,))\n    row = cur.fetchone()\n    conn.close()\n\n    if not row:\n        print(\"Preset n\u00e3o encontrado\")\n        return\n\n    w, h, r, scale, aspect = row\n\n    subprocess.run([\n        \"hyprctl\", \"keyword\", \"monitor\",\n        f\"{monitor},{w}x{h}@{r},auto,{scale}\"\n    ])\n\n# ------------------------\n# CLI\n# ------------------------\nif __name__ == \"__main__\":\n    ensure_db()\n\n    if len(sys.argv) == 1:\n        print(\"\\n\".join(list_modes()))\n\n    elif sys.argv[1] == \"apply\":\n        apply(sys.argv[2])\n\n    elif sys.argv[1] == \"add\":\n        # name w h r scale aspect\n        add_preset(\n            sys.argv[2],\n            int(sys.argv[3]),\n            int(sys.argv[4]),\n            int(sys.argv[5]),\n            float(sys.argv[6]),\n            sys.argv[7]\n        )\n\n    elif sys.argv[1] == \"delete\":\n        delete_preset(sys.argv[2])\n\n    elif sys.argv[1] == \"raw_modes\":\n        _, modes = get_monitor()\n        print(\"\\n\".join(modes))\n\n    elif sys.argv[1] == \"list_names\":\n        presets = get_presets()\n        for p in presets:\n            print(p[0])\n",
+      "summary": "!/usr/bin/env python3. Contains 5 functions/classes: ensure_db, get_monitor, get_presets, add_preset, ....",
+      "file_hash": "b85d02dc"
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::ensure_db",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 23,
+      "keywords": [
+        "ensure_db",
+        "ensure"
+      ],
+      "symbol_type": "use_case",
+      "name": "ensure_db",
+      "line_start": 13,
+      "line_end": 35,
+      "body_hash": "b7832562",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::get_monitor",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 7,
+      "keywords": [
+        "get_monitor",
+        "get",
+        "monitor"
+      ],
+      "symbol_type": "use_case",
+      "name": "get_monitor",
+      "line_start": 36,
+      "line_end": 42,
+      "body_hash": "e5571c9a",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::get_presets",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 7,
+      "keywords": [
+        "get_presets",
+        "get",
+        "presets"
+      ],
+      "symbol_type": "use_case",
+      "name": "get_presets",
+      "line_start": 43,
+      "line_end": 49,
+      "body_hash": "4c53fee9",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::add_preset",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 11,
+      "keywords": [
+        "add_preset",
+        "add",
+        "preset"
+      ],
+      "symbol_type": "use_case",
+      "name": "add_preset",
+      "line_start": 51,
+      "line_end": 61,
+      "body_hash": "13b0d778",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::delete_preset",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 10,
+      "keywords": [
+        "delete_preset",
+        "delete",
+        "preset"
+      ],
+      "symbol_type": "use_case",
+      "name": "delete_preset",
+      "line_start": 63,
+      "line_end": 72,
+      "body_hash": "9a34614d",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::list_modes",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 16,
+      "keywords": [
+        "list_modes",
+        "list",
+        "modes"
+      ],
+      "symbol_type": "use_case",
+      "name": "list_modes",
+      "line_start": 73,
+      "line_end": 88,
+      "body_hash": "0c60b57d",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/res.py::apply",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/res.py",
+      "ext": ".py",
+      "size": 58,
+      "keywords": [
+        "apply"
+      ],
+      "symbol_type": "use_case",
+      "name": "apply",
+      "line_start": 89,
+      "line_end": 146,
+      "body_hash": "df8f10b3",
+      "confidence": "high",
+      "exported": true
+    },
+    {
+      "id": "custom-binaries/.bin/rand_uneven_hex.py",
+      "kind": "file",
+      "path": "custom-binaries/.bin/rand_uneven_hex.py",
+      "ext": ".py",
+      "size": 562,
+      "keywords": [
+        "hex_fixed",
+        "hex",
+        "fixed"
+      ],
+      "content": "#!/bin/python3\nimport random\nimport sys\nimport os\n\ndef hex_fixed(n: int, bits: int) -> str:\n    digits = bits // 4\n    return f\"0x{n & ((1 << bits) - 1):0{digits}x}\"\n\nif not len(sys.argv) == 3:\n    print(f\"Usage: {sys.argv[0]} <quantity> <size_bits>\")\n    exit(1)\n\nif int(sys.argv[2]) not in [8, 16, 32, 64]:\n    print(\"<size_bits> must be power of two, from 8 to 64\\nAllowed <size_bits>: [8, 16, 32, 64]\")\n    exit(1)\n\nfor a in range(int(sys.argv[1])):\n    num_impar = random.getrandbits(int(sys.argv[2])) | 1\n    print(hex_fixed(num_impar, int(sys.argv[2])))\n\n",
+      "summary": "!/bin/python3. Contains 1 function: hex_fixed.",
+      "file_hash": "bffb58d0"
+    },
+    {
+      "id": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+      "kind": "symbol",
+      "path": "custom-binaries/.bin/rand_uneven_hex.py",
+      "ext": ".py",
+      "size": 15,
+      "keywords": [
+        "hex_fixed",
+        "hex",
+        "fixed"
+      ],
+      "symbol_type": "use_case",
+      "name": "hex_fixed",
+      "line_start": 5,
+      "line_end": 19,
+      "body_hash": "a9576b47",
+      "confidence": "high",
+      "exported": true
+    }
+  ],
+  "edges": [
+    {
+      "from": "AGENTS.md",
+      "to": "src/auth.ts",
+      "rel": "references"
+    },
+    {
+      "from": "AGENTS.md",
+      "to": "src/db.ts",
+      "rel": "references"
+    },
+    {
+      "from": "AGENTS.md",
+      "to": "relevant/file.ts",
+      "rel": "references"
+    },
+    {
+      "from": "fastfetch/.config/fastfetch/README.md",
+      "to": "//github.c",
+      "rel": "references"
+    },
+    {
+      "from": "fastfetch/.config/fastfetch/README.md",
+      "to": "/.c",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/opencode.json",
+      "to": "ai/config.js",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/AGENTS.md",
+      "to": "src/auth.ts",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/AGENTS.md",
+      "to": "src/db.ts",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/AGENTS.md",
+      "to": "relevant/file.ts",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/README.md",
+      "to": "//github.c",
+      "rel": "references"
+    },
+    {
+      "from": "nvim/.config/nvim/.claude/settings.local.json",
+      "to": "/home/yyax/dotfiles/nvim/.c",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/opencode.json",
+      "to": "ai/config.js",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/AGENTS.md",
+      "to": "src/auth.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/AGENTS.md",
+      "to": "src/db.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/AGENTS.md",
+      "to": "relevant/file.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/CLAUDE.md",
+      "to": "src/auth.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/CLAUDE.md",
+      "to": "src/db.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/CLAUDE.md",
+      "to": "relevant/file.ts",
+      "rel": "references"
+    },
+    {
+      "from": "hypr/.config/hypr/.claude/settings.local.json",
+      "to": "/home/yyax/dotfiles/hypr/.c",
+      "rel": "references"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "os",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "sys",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "fnmatch",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "readline",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "glob",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "pathlib",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::path_completer",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::enable_path_autocomplete",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::ask_save_path",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::parse_gitignore_patterns",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::is_path_ignored",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::get_user_selection",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::get_directories_and_files",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::collect_file_contents",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::save_codebase_md",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/codebase.py",
+      "to": "custom-binaries/.bin/codebase.py::main",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "sqlite3",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "subprocess",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "json",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "os",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "sys",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "/.c",
+      "rel": "references"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::ensure_db",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::get_monitor",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::get_presets",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::add_preset",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::delete_preset",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::list_modes",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/res.py",
+      "to": "custom-binaries/.bin/res.py::apply",
+      "rel": "contains"
+    },
+    {
+      "from": "custom-binaries/.bin/rand_uneven_hex.py",
+      "to": "random",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/rand_uneven_hex.py",
+      "to": "sys",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/rand_uneven_hex.py",
+      "to": "os",
+      "rel": "imports"
+    },
+    {
+      "from": "custom-binaries/.bin/rand_uneven_hex.py",
+      "to": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+      "rel": "contains"
+    }
+  ]
+}

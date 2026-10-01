@@ -1,0 +1,168 @@
+{
+  "entries": {
+    "commit changes dotfiles repo|tf=5|te=8": {
+      "created_epoch": 1790883175,
+      "files": [
+        "custom-binaries/.bin/codebase.py::ask_save_path",
+        "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+        "custom-binaries/.bin/res.py::add_preset",
+        "nvim/.config/nvim/lazy-lock.json",
+        ".claude/settings.local.json"
+      ],
+      "mtimes_ns": {
+        "custom-binaries/.bin/codebase.py::ask_save_path": 1786380995644563737,
+        "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed": 1786380995644563737,
+        "custom-binaries/.bin/res.py::add_preset": 1782857777489318682,
+        "nvim/.config/nvim/lazy-lock.json": 1786380986929544882,
+        ".claude/settings.local.json": 1789667307433151621
+      },
+      "result": {
+        "ok": true,
+        "query": "commit changes in dotfiles repo",
+        "graph_files": [
+          {
+            "id": "custom-binaries/.bin/codebase.py::ask_save_path",
+            "kind": "symbol",
+            "path": "custom-binaries/.bin/codebase.py",
+            "ext": ".py",
+            "size": 35,
+            "keywords": [
+              "ask_save_path",
+              "ask",
+              "save",
+              "path"
+            ],
+            "symbol_type": "use_case",
+            "name": "ask_save_path",
+            "line_start": 64,
+            "line_end": 98,
+            "body_hash": "7ea2cfcf",
+            "confidence": "high",
+            "exported": true,
+            "_score": 11,
+            "_role": "code",
+            "_intent": "edit"
+          },
+          {
+            "id": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+            "kind": "symbol",
+            "path": "custom-binaries/.bin/rand_uneven_hex.py",
+            "ext": ".py",
+            "size": 15,
+            "keywords": [
+              "hex_fixed",
+              "hex",
+              "fixed"
+            ],
+            "symbol_type": "use_case",
+            "name": "hex_fixed",
+            "line_start": 5,
+            "line_end": 19,
+            "body_hash": "a9576b47",
+            "confidence": "high",
+            "exported": true,
+            "_score": 11,
+            "_role": "code",
+            "_intent": "edit"
+          },
+          {
+            "id": "custom-binaries/.bin/res.py::add_preset",
+            "kind": "symbol",
+            "path": "custom-binaries/.bin/res.py",
+            "ext": ".py",
+            "size": 11,
+            "keywords": [
+              "add_preset",
+              "add",
+              "preset"
+            ],
+            "symbol_type": "use_case",
+            "name": "add_preset",
+            "line_start": 51,
+            "line_end": 61,
+            "body_hash": "13b0d778",
+            "confidence": "high",
+            "exported": true,
+            "_score": 11,
+            "_role": "code",
+            "_intent": "edit"
+          },
+          {
+            "id": "nvim/.config/nvim/lazy-lock.json",
+            "kind": "file",
+            "path": "nvim/.config/nvim/lazy-lock.json",
+            "ext": ".json",
+            "size": 3138,
+            "keywords": [],
+            "summary": "\"LazyVim\": { \"branch\": \"main\", \"commit\": \"459a4c3b1059671e766a46c7cc223827dc67e3d0\" },.",
+            "file_hash": "212c6b17",
+            "_score": 5,
+            "_role": "code",
+            "_intent": "edit"
+          },
+          {
+            "id": ".claude/settings.local.json",
+            "kind": "file",
+            "path": ".claude/settings.local.json",
+            "ext": ".json",
+            "size": 1050,
+            "keywords": [],
+            "summary": "\"hooks\": {.",
+            "file_hash": "d4398927",
+            "_score": 2,
+            "_role": "code",
+            "_intent": "edit"
+          }
+        ],
+        "graph_edges": [
+          {
+            "from": "custom-binaries/.bin/codebase.py",
+            "to": "custom-binaries/.bin/codebase.py::ask_save_path",
+            "rel": "contains"
+          },
+          {
+            "from": "custom-binaries/.bin/rand_uneven_hex.py",
+            "to": "custom-binaries/.bin/rand_uneven_hex.py::hex_fixed",
+            "rel": "contains"
+          },
+          {
+            "from": "custom-binaries/.bin/res.py",
+            "to": "custom-binaries/.bin/res.py::add_preset",
+            "rel": "contains"
+          },
+          {
+            "from": "hypr/.config/hypr/.claude/settings.local.json",
+            "to": "/home/yyax/dotfiles/hypr/.c",
+            "rel": "references"
+          },
+          {
+            "from": "nvim/.config/nvim/.claude/settings.local.json",
+            "to": "/home/yyax/dotfiles/nvim/.c",
+            "rel": "references"
+          },
+          {
+            "from": "custom-binaries/.bin/codebase.py",
+            "to": "fnmatch",
+            "rel": "imports"
+          },
+          {
+            "from": "custom-binaries/.bin/codebase.py",
+            "to": "glob",
+            "rel": "imports"
+          },
+          {
+            "from": "custom-binaries/.bin/codebase.py",
+            "to": "os",
+            "rel": "imports"
+          }
+        ],
+        "grep_hits": [],
+        "reuse_candidates": [],
+        "read_budget": {
+          "remaining_chars": 60000,
+          "reuse_gate_candidates": []
+        }
+      }
+    }
+  }
+}

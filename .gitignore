@@ -1,0 +1,5 @@
+# Dual-graph runtime artifacts (pids, ports, logs)
+**/.dual-graph/run/
+
+# Dual-graph runtime artifacts at repo root
+/.dual-graph/run/

@@ -10,6 +10,24 @@
     {
       "id": "shaders/saturation.glsl",
       "type": "file"
+    },
+    {
+      "id": "action:edit:1790880526",
+      "type": "action",
+      "meta": {
+        "summary": "Removed all useless/duplicated comments from hyprland.lua (boilerplate, commented-out examples, dup links)"
+      }
+    },
+    {
+      "id": "hyprland.lua",
+      "type": "file"
+    },
+    {
+      "id": "action:edit:1790883082",
+      "type": "action",
+      "meta": {
+        "summary": "Restored accidentally-dropped dwindle config block; confirmed comment cleanup changed no behavior"
+      }
     }
   ],
   "edges": [
@@ -18,6 +36,18 @@
       "to": "shaders/saturation.glsl",
       "rel": "edited",
       "ts": 1789696024
+    },
+    {
+      "from": "action:edit:1790880526",
+      "to": "hyprland.lua",
+      "rel": "edited",
+      "ts": 1790880526
+    },
+    {
+      "from": "action:edit:1790883082",
+      "to": "hyprland.lua",
+      "rel": "edited",
+      "ts": 1790883082
     }
   ],
   "files": {
@@ -25,11 +55,30 @@
       "last_action": "edited",
       "last_ts": "2026-09-18T01:47:04.618073+00:00",
       "edited_count": 1
+    },
+    "hyprland.lua": {
+      "last_action": "edited",
+      "last_ts": "2026-10-01T19:31:22.659703+00:00",
+      "edited_count": 2
     }
   },
   "actions": [
     {
       "ts": 1789696024,
+      "kind": "register_edit",
+      "payload": {
+        "kind": "register_edit"
+      }
+    },
+    {
+      "ts": 1790880526,
+      "kind": "register_edit",
+      "payload": {
+        "kind": "register_edit"
+      }
+    },
+    {
+      "ts": 1790883082,
       "kind": "register_edit",
       "payload": {
         "kind": "register_edit"
@@ -42,6 +91,22 @@
       "summary": "Fixed GLSL int-literal-to-float compile bug preventing saturation shader from applying",
       "files": [
         "shaders/saturation.glsl"
+      ],
+      "scope": "file"
+    },
+    {
+      "ts": 1790880526,
+      "summary": "Removed all useless/duplicated comments from hyprland.lua (boilerplate, commented-out examples, dup links)",
+      "files": [
+        "hyprland.lua"
+      ],
+      "scope": "file"
+    },
+    {
+      "ts": 1790883082,
+      "summary": "Restored accidentally-dropped dwindle config block; confirmed comment cleanup changed no behavior",
+      "files": [
+        "hyprland.lua"
       ],
       "scope": "file"
     }
