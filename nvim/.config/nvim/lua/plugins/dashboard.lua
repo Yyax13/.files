@@ -125,6 +125,7 @@ return {
           { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
           { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})" },
           { icon = " ", key = "h", desc = "Change current Header", action = walk_headers },
+          { icon = " ", key = "i", desc = "Git Issues", action = "<leader>gi" },
           { icon = " ", key = "t", desc = "Todo", action = ":TodoTelescope" },
           { icon = " ", key = "q", desc = "Quit", action = ":qa" },
         },
