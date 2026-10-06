@@ -1,3 +1,0 @@
-{"timestamp": "2026-09-18T01:47:04.619709+00:00", "tool": "graph_register_edit", "payload": {"files": ["shaders/saturation.glsl"], "summary": "Fixed GLSL int-literal-to-float compile bug preventing saturation shader from applying"}}
-{"timestamp": "2026-10-01T18:48:46.307078+00:00", "tool": "graph_register_edit", "payload": {"files": ["hyprland.lua"], "summary": "Removed all useless/duplicated comments from hyprland.lua (boilerplate, commented-out examples, dup links)"}}
-{"timestamp": "2026-10-01T19:31:22.663168+00:00", "tool": "graph_register_edit", "payload": {"files": ["hyprland.lua"], "summary": "Restored accidentally-dropped dwindle config block; confirmed comment cleanup changed no behavior"}}

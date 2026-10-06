@@ -1,5 +1,8 @@
-# Dual-graph runtime artifacts (pids, ports, logs)
-**/.dual-graph/run/
-
-# Dual-graph runtime artifacts at repo root
-/.dual-graph/run/
+# AI / MCP tooling (agent policy, editor integration, local graph server)
+.dual-graph/
+**/.dual-graph/
+.claude/
+**/.claude/
+AGENTS.md
+CLAUDE.md
+opencode.json
