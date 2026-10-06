@@ -125,7 +125,7 @@ hl.config({
 	decoration = {
 		rounding = 2,
 		-- Change transparency of focused and unfocused windows
-		active_opacity = 0.985,
+		active_opacity = 1,
 		inactive_opacity = 0.985,
 		-- https://wiki.hyprland.org/Configuring/Variables/#blur
 		blur = {
@@ -134,7 +134,7 @@ hl.config({
 			passes = 1,
 			new_optimizations = true,
 			vibrancy = 0.1696,
-			ignore_opacity = true,
+			ignore_opacity = false,
 		},
 	},
 })
@@ -532,7 +532,7 @@ hl.window_rule({
 	match = {
 		class = "^(kitty)$",
 	},
-	opacity = 0.95,
+	opacity = 0.90,
 })
 
 hl.window_rule({
