@@ -18,7 +18,7 @@ local FALLBACK = {
 }
 
 local fixed = {
-    black0 = "#0a0a0a",
+    black0 = "#040404",
     black1 = "#111111",
     black2 = "#1a1a1a",
     black3 = "#313131",

@@ -80,8 +80,6 @@ hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", 1)
 
 hl.env("QT_AUTO_SCREEN_SCALE_FACTOR", 1)
 
-hl.env("QT_STYLE_OVERRIDE", "kvantum")
-
 -- Toolkit Backend Variables
 
 hl.env("GDK_BACKEND", "wayland,x11,*")
@@ -127,16 +125,16 @@ hl.config({
 	decoration = {
 		rounding = 2,
 		-- Change transparency of focused and unfocused windows
-		active_opacity = 0.985,
+		active_opacity = 1,
 		inactive_opacity = 0.985,
 		-- https://wiki.hyprland.org/Configuring/Variables/#blur
 		blur = {
 			enabled = true,
-			size = 2,
+			size = 1,
 			passes = 1,
 			new_optimizations = true,
 			vibrancy = 0.1696,
-			ignore_opacity = true,
+			ignore_opacity = false,
 		},
 	},
 })
@@ -510,7 +508,7 @@ hl.window_rule({
 	match = {
 		class = "^(obsidian)$",
 	},
-	opacity = 0.95,
+	opacity = 1,
 })
 
 hl.window_rule({
@@ -534,7 +532,7 @@ hl.window_rule({
 	match = {
 		class = "^(kitty)$",
 	},
-	opacity = 0.95,
+	opacity = 0.835,
 })
 
 hl.window_rule({
