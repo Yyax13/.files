@@ -506,9 +506,9 @@ hl.window_rule({
 hl.window_rule({
 	name = "windowrule-6",
 	match = {
-		class = "^(obsidian)$",
+		class = "(.*)obsidian(.*)",
 	},
-	opacity = 0.95,
+	opacity = 0.90,
 })
 
 hl.window_rule({
