@@ -496,6 +496,23 @@ apply_shader("sober-saturation-title", { title = "(.*)Roblox(.*)" }, saturation_
 apply_shader("cs", { title = "^(cs2)$" }, saturation_shader)
 
 hl.window_rule({
+	name = "thunar rename",
+	match = {
+		title = ".*(?i)(Renomear|Rename).*",
+		class = "(?i)^thunar$",
+	},
+	float = true,
+})
+
+hl.window_rule({
+	name = "havoc",
+	match = {
+		initial_class = "^(Havoc)$",
+	},
+	float = true,
+})
+
+hl.window_rule({
 	name = "windowrule-5",
 	match = {
 		class = "^(dev.warp.Warp)$",
