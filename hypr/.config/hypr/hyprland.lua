@@ -144,8 +144,15 @@ hl.config({
 hl.config({
 	animations = {
 		enabled = true,
-		-- Default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
 	},
+})
+
+hl.animation({
+	leaf = "borderangle",
+	enabled = true,
+	speed = 67,
+	bezier = "linear",
+	style = "loop",
 })
 
 -- See https://wiki.hyprland.org/Configuring/Dwindle-Layout/ for more
