@@ -4,9 +4,26 @@
 
 local map = LazyVim.safe_keymap_set
 
-vim.keymap.set("n", "<leader>q", function()
+-- Quick Exit
+map("n", "<leader>q", function()
+    vim.cmd("confirm %bd")
     require("snacks").dashboard.open()
-end)
+end, { desc = "Restart to Dashboard" })
 
+-- Vertical scrolling
+map("n", "<A-Up>", "1<C-y>", { desc = "Scroll Up" })
+map("n", "<A-Down>", "1<C-e>", { desc = "Scroll Down" })
+
+map("n", "<A-S-Up>", "2<C-y>", { desc = "Scroll Up (2 lines)" })
+map("n", "<A-S-Down>", "2<C-e>", { desc = "Scroll Down (2 lines)" })
+
+-- Horizontal scrolling
+map("n", "<A-Left>", "1zh", { desc = "Scroll Left" })
+map("n", "<A-Right>", "1zl", { desc = "Scroll Right" })
+
+map("n", "<A-S-Left>", "2zh", { desc = "Scroll Left (2 columns)" })
+map("n", "<A-S-Right>", "2zl", { desc = "Scroll Right (2 columns)" })
+
+-- Buffer change
 map("n", "<S-z>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "<S-x>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
