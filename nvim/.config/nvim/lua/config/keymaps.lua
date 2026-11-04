@@ -10,19 +10,22 @@ map("n", "<leader>q", function()
     require("snacks").dashboard.open()
 end, { desc = "Restart to Dashboard" })
 
--- Vertical scrolling
-map("n", "<A-Up>", "1<C-y>", { desc = "Scroll Up" })
-map("n", "<A-Down>", "1<C-e>", { desc = "Scroll Down" })
+local modes = { "n", "v", "s", "i" }
 
-map("n", "<A-S-Up>", "2<C-y>", { desc = "Scroll Up (2 lines)" })
-map("n", "<A-S-Down>", "2<C-e>", { desc = "Scroll Down (2 lines)" })
+-- Alt + Arrows: viewport scrolling (1)
+map(modes, "<A-Up>", "1<C-y>", { desc = "Scroll Up" })
+map(modes, "<A-Down>", "1<C-e>", { desc = "Scroll Down" })
 
--- Horizontal scrolling
-map("n", "<A-Left>", "1zh", { desc = "Scroll Left" })
-map("n", "<A-Right>", "1zl", { desc = "Scroll Right" })
+map(modes, "<A-Left>", "1zh", { desc = "Scroll Left" })
+map(modes, "<A-Right>", "1zl", { desc = "Scroll Right" })
 
-map("n", "<A-S-Left>", "2zh", { desc = "Scroll Left (2 columns)" })
-map("n", "<A-S-Right>", "2zl", { desc = "Scroll Right (2 columns)" })
+-- Shift + Alt + Up/Down: viewport scrolling (2)
+map(modes, "<A-S-Up>", "3<C-y>", { desc = "Scroll Up (3)" })
+map(modes, "<A-S-Down>", "3<C-e>", { desc = "Scroll Down (3)" })
+
+-- Ctrl + Arrows: cursor movement (9)
+map(modes, "<C-Up>", "9k", { desc = "Move Up (9 lines)" })
+map(modes, "<C-Down>", "9j", { desc = "Move Down (9 lines)" })
 
 -- Buffer change
 map("n", "<S-z>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
