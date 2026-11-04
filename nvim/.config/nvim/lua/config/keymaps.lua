@@ -20,8 +20,8 @@ map(modes, "<A-Left>", "1zh", { desc = "Scroll Left" })
 map(modes, "<A-Right>", "1zl", { desc = "Scroll Right" })
 
 -- Shift + Alt + Up/Down: viewport scrolling (2)
-map(modes, "<A-S-Up>", "3<C-y>", { desc = "Scroll Up (3)" })
-map(modes, "<A-S-Down>", "3<C-e>", { desc = "Scroll Down (3)" })
+map(modes, "<A-S-Up>", "2<C-y>", { desc = "Scroll Up (3)" })
+map(modes, "<A-S-Down>", "2<C-e>", { desc = "Scroll Down (3)" })
 
 -- Ctrl + Arrows: cursor movement (9)
 map(modes, "<C-Up>", "9k", { desc = "Move Up (9 lines)" })
