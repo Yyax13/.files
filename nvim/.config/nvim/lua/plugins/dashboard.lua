@@ -94,7 +94,7 @@ local headers = {
   ]],
 }
 
-local current = 2
+local current = 1
 
 local function walk_headers()
     current = (current % #headers) + 1
