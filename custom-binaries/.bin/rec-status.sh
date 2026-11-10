@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if [ -f /tmp/wf-recording.pid ]; then
-    echo '{"text":"","class":"active"}'
+if [ -f "/tmp/wl-screenrec.pid" ]; then
+  echo '{"text":"","class":"active"}'
 else
-    echo '{"text":"","class":"inactive"}'
+  echo '{"text":"","class":"inactive"}'
 fi
